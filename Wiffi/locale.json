@@ -1,7 +1,11 @@
 {
 	"translations": {
 		"de": {
-			"Weatherman": "Weatherman",
+			"Wiffi": "Wiffi",
+
+			"Module type": "Modultyp",
+			"none": "nicht angegeben",
+			"Wiffi WZ": "Wiffi WZ",
 
 			"Variables": "Variablen",
 			"available variables": "verfügbare Variablen",
@@ -9,22 +13,13 @@
 			"Description": "Beschreibung",
 			"use": "verwenden",
 
-			"Windspeed in km/h instead of m/s": "Windgeschwindigkeit in km/h statt m/s",
-
 			"Options": "Optionen",
-			"Station altitude": "Höhe der Wetterstation",
+			"Module altitude": "Höhe des Modules",
 			"additional Calculations": "zusätzliche Rechenwerte",
-			" ... Heatindex (needs \"w_temperatur\", \"w_feuchte_rel\")":
-				" ... Hitzeindex (benötigt \"w_temperatur\", \"w_feuchte_rel\")",
-			" ... absolute pressure (needs \"w_barometer\", \"w_temperatur\" and the altitude)":
-				" ... absoluter Luftdruck (benötigt \"w_barometer\", \"w_temperatur\" und die Höhe)",
-			" ... Windstrength as text (needs \"w_windstaerke\")":
-				" ... Windstärke als Text (benötigt \"w_windstaerke\")",
-			" ... Precipitation level (needs \"w_regen_letzte_h\")":
-				" ... Niederschlag-Stufe (benötigt \"w_regen_letzte_h\")",
-			" ... use rainsensor to detect drizzle (needs \"w_regensensor_wert\")":
-				" ... Regensensor-Wert verwenden um Nieselregen zu erkennen (benötigt \"w_regensensor_wert\")",
-			"minumum rainsensor-value": "minimaler Regensensor-Wert",
+			" ... Heatindex (needs \"wz_temp\", \"wz_feuchte_rel\")":
+				" ... Hitzeindex (benötigt \"wz_temp\", \"wz_feuchte_rel\")",
+			" ... absolute pressure (needs \"wz_baro\", \"wz_temp\" and the altitude)":
+				" ... absoluter Luftdruck (benötigt \"wz_baro\", \"wz_temp\" und die Höhe)",
 
 			"Module description": "Modulbeschreibung",
 
@@ -37,70 +32,30 @@
 			"Absolute pressure": "absoluter Luftdruck",
 			"Air pressure": "Luftdruck",
 			"Brightness": "Helligkeit",
+			"CO2": "CO2",
 			"Dewpoint": "Taupunkt",
-			"Difference between sun and shadow temperature": "Differenz zwischen Sonnen- und Schatten-Temperatur",
 			"Heatindex": "Hitzeindex",
-			"Hours of rain today": "Regenstunden heute",
-			"Hours of sunshine today": "Sonnenstunden heute",
 			"Humidity": "Luftfeuchtigkeit",
 			"IP-address": "IP-Adresse",
-			"Minutes from sunrise": "Minuten vor dem Sonnenaufgang",
-			"Minutes from sunset": "Minuten vor dem Sonnenuntergang",
-			"Precipitation level": "Niederschlag-Stufe",
-			"Precipitation": "Niederschlag",
-			"Rain detector": "Regenmelder",
-			"Rainfall of last hour": "Regenmenge der letzten Stunde",
-			"Rainfall of today": "Regenmenge von heute",
-			"Rainfall of yesterday": "Regenmenge von gestern",
-			"Rainfall": "Regenmenge",
-			"Rain sensor": "Regensensor",
-			"Shadow temperature": "Schattentemperatur",
-			"Sky temperatur": "Himmelstemperatur",
-			"Speed of gusts of last 10m": "Geschwindigkeit der Böen der letzten 10m",
+			"Left motion detected": "Bewegung links erkannt",
+			"Motion detected": "Bewegung erkannt",
+			"Noise detected": "Geräusch erkannt",
+			"Right motion detected": "Bewegung rechts erkannt",
 			"Sun azimut": "Sonnenrichtung",
-			"Sun detector": "Sonnenmelder",
 			"Sun elevation": "Sonnenhöhe",
-			"Sun temperatur": "Sonnentemperatur",
+			"Temperature": "Temperatur",
 			"Trend of air pressure": "Trend des Luftdrucks",
-			"UV-Index": "UV-Index",
-			"Windchill": "gefühle Temperatur",
-			"Winddirection": "Windrichtung",
-			"Windspeed": "Windgeschwindigkeit",
-			"Windstrength": "Windstärke",
 
 			"On": "Ein",
 			"Off": "Aus",
-
-			"Calm": "Windstille",
-			"Light air": "leiser Zug",
-			"Light breeze": "leichte Brise",
-			"Gentle breeze": "schwache Brise",
-			"Moderate breeze": "mäßige Brise",
-			"Fresh breeze": "frische Brise",
-			"Strong breeze": "starker Wind",
-			"High wind": "steifer Wind",
-			"Gale": "stürmischer Wind",
-			"Strong gale": "Sturm",
-			"Storm": "schwerer Sturm",
-			"Hurricane force": "orkanartiger Sturm",
-			"Violent storm": "Orkan",
-
-			"dry": "trocken",
-			"drizzle": "Nieselregen",
-			"mist": "Sprühregen",
-			"light rain": "leichter Regen",
-			"moderate rain": "mäßiger Regen",
-			"heavy rain": "starker Regen",
-			"showers": "Schauerregen",
-			"rain storm": "Gewitterregen",
-			"downpour": "Sturzregen",
 
 			"Instance getting created": "Instanz wird erstellt",
 			"Instance is active": "Instanz ist aktiv",
 			"Instance is deleted": "Instanz wird gelöscht",
 			"Instance is inactive": "Instanz ist inaktiv",
 			"Instance is not created": "Instanz wurde nicht erzeugt",
-			"Instance is inactive (invalid configuration)": "Instanz ist inaktiv (ungültige Konfiguration)"
+			"Instance is inactive (invalid configuration)": "Instanz ist inaktiv (ungültige Konfiguration)",
+			"Instance is inactive (module mismatch)": "Instanz ist inaktiv (Modul stimmt nicht)"
 		}
 	}
 }

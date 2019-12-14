@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 
 if (!defined('WIFFI_MODULE_NONE')) {
-    define('WIFFI_MODULE_NONE', 0;
+    define('WIFFI_MODULE_NONE', 0);
     define('WIFFI_MODULE_WZ', 1);
 }
 
@@ -21,7 +21,7 @@ class Wiffi extends IPSModule
         $this->RegisterPropertyString('use_fields', '[]');
 
         $this->RegisterPropertyInteger('altitude', false);
-		$this->RegisterPropertyBoolean('with_absolute_pressure', false)
+        $this->RegisterPropertyBoolean('with_absolute_pressure', false);
         $this->RegisterPropertyBoolean('with_heatindex', false);
 
         $this->CreateVarProfile('Wiffi.Wifi', VARIABLETYPE_INTEGER, ' dBm', 0, 0, 0, 0, 'Intensity');
@@ -92,43 +92,43 @@ class Wiffi extends IPSModule
 
         $vpos = 80;
 
-		$module_type = $this->ReadPropertyInteger('module_type');
+        $module_type = $this->ReadPropertyInteger('module_type');
         $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
         if ($with_heatindex) {
-			switch ($module_type) {
-				case WIFFI_MODULE_WZ:
-					if (!(in_array('wz_temperatur', $identList) && in_array('wz_feuchte_rel', $identList))) {
-						$this->SendDebug(__FUNCTION__, '"with_heatindex" needs "wz_temperatur", "wz_feuchte_rel"', 0);
-						$with_heatindex = false;
-						$status = IS_INVALIDCONFIG;
-					}
-					break;
-				default:
-					$this->SendDebug(__FUNCTION__, '"with_heatindex" not available for module_type ' . $module_type, 0);
-					$status = IS_INVALIDCONFIG;
-					break;
-			}
-		}
+            switch ($module_type) {
+                case WIFFI_MODULE_WZ:
+                    if (!(in_array('wz_temp', $identList) && in_array('wz_feuchte_rel', $identList))) {
+                        $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "wz_temp", "wz_feuchte_rel"', 0);
+                        $with_heatindex = false;
+                        $status = IS_INVALIDCONFIG;
+                    }
+                    break;
+                default:
+                    $this->SendDebug(__FUNCTION__, '"with_heatindex" not available for module_type ' . $module_type, 0);
+                    $status = IS_INVALIDCONFIG;
+                    break;
+            }
+        }
         $this->MaintainVariable('Heatindex', $this->Translate('Heatindex'), VARIABLETYPE_FLOAT, 'Wiffi.Heatindex', $vpos++, $with_heatindex);
 
         $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
         if ($with_absolute_pressure) {
-			switch ($module_type) {
-				case WIFFI_MODULE_WZ:
-					if (!(in_array('wz_temperatur', $identList) && in_array('wz_feuchte_rel', $identList))) {
-						$altitude = $this->ReadPropertyInteger('altitude');
-						if (!(in_array('wz_baro', $identList) && in_array('wz_temp', $identList) && $altitude > 0)) {
-							$this->SendDebug(__FUNCTION__, '"with_absolute_pressure" needs "wz_baro", "wz_temp" and "altitude"', 0);
-							$with_absolute_pressure = false;
-							$status = IS_INVALIDCONFIG;
-						}
-					}
-					break;
-				default:
-					$this->SendDebug(__FUNCTION__, '"with_absolute_pressure" not available for module_type ' . $module_type, 0);
-					$status = IS_INVALIDCONFIG;
-					break;
-			}
+            switch ($module_type) {
+                case WIFFI_MODULE_WZ:
+                    if (!(in_array('wz_temp', $identList) && in_array('wz_feuchte_rel', $identList))) {
+                        $altitude = $this->ReadPropertyInteger('altitude');
+                        if (!(in_array('wz_baro', $identList) && in_array('wz_temp', $identList) && $altitude > 0)) {
+                            $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" needs "wz_baro", "wz_temp" and "altitude"', 0);
+                            $with_absolute_pressure = false;
+                            $status = IS_INVALIDCONFIG;
+                        }
+                    }
+                    break;
+                default:
+                    $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" not available for module_type ' . $module_type, 0);
+                    $status = IS_INVALIDCONFIG;
+                    break;
+            }
         }
         $this->MaintainVariable('AbsolutePressure', $this->Translate('Absolute pressure'), VARIABLETYPE_FLOAT, 'Weatherman.Pressure', $vpos++, $with_absolute_pressure);
 
@@ -163,11 +163,11 @@ class Wiffi extends IPSModule
         $formElements = [];
         $formElements[] = ['type' => 'Label', 'label' => 'Wiffi'];
 
-		$opts_module_type = [];
+        $opts_module_type = [];
         $opts_module_type[] = ['label' => $this->Translate('none'), 'value' => WIFFI_MODULE_NONE];
         $opts_module_type[] = ['label' => $this->Translate('Wiffi-WZ'), 'value' => WIFFI_MODULE_WZ];
 
-		$formElements[] = ['type' => 'Select', 'name' => 'module_type', 'caption' => 'Module type', 'options' => $opts_module_type];
+        $formElements[] = ['type' => 'Select', 'name' => 'module_type', 'caption' => 'Module type', 'options' => $opts_module_type];
 
         $values = [];
         $fieldMap = $this->getFieldMap();
@@ -216,28 +216,34 @@ class Wiffi extends IPSModule
         $items = [];
 
         $items[] = [
+            'type'    => 'NumberSpinner',
+            'name'    => 'altitude',
+            'caption' => 'Module altitude'
+        ];
+
+        $items[] = [
             'type'    => 'Label',
             'caption' => 'additional Calculations'
         ];
 
-		$module_type = $this->ReadPropertyInteger('module_type');
-		switch ($module_type) {
-			case WIFFI_MODULE_WZ:
-				$items[] = [
-					'type'    => 'CheckBox',
-					'name'    => 'with_heatindex',
-					'caption' => ' ... Heatindex (needs "wz_temperatur", "wz_feuchte_rel")'
-				];
+        $module_type = $this->ReadPropertyInteger('module_type');
+        switch ($module_type) {
+            case WIFFI_MODULE_WZ:
+                $items[] = [
+                    'type'    => 'CheckBox',
+                    'name'    => 'with_heatindex',
+                    'caption' => ' ... Heatindex (needs "wz_temp", "wz_feuchte_rel")'
+                ];
 
-				$items[] = [
-					'type'    => 'CheckBox',
-					'name'    => 'with_absolute_pressure',
-					'caption' => ' ... absolute pressure (needs "wz_baro", "wz_temp" and the altitude)'
-				];
-				break;
-			default:
-				break;
-		}
+                $items[] = [
+                    'type'    => 'CheckBox',
+                    'name'    => 'with_absolute_pressure',
+                    'caption' => ' ... absolute pressure (needs "wz_baro", "wz_temp" and the altitude)'
+                ];
+                break;
+            default:
+                break;
+        }
 
         $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Options'];
 
@@ -285,45 +291,36 @@ class Wiffi extends IPSModule
 
         $modultyp = $this->GetArrayElem($jdata, 'modultyp', '');
 
-		$module_type = $this->ReadPropertyInteger('module_type');
-		switch ($module_type) {
-			case WIFFI_MODULE_WZ:
-				if ($modultyp != 'wiffi-wz') {
-					$this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
-					$this->SetStatus(IS_MODULETYPEMISMATCH);
-					return;
-				}
-				break;
-			default:
-				return;
-		}
+        $module_type = $this->ReadPropertyInteger('module_type');
+        switch ($module_type) {
+            case WIFFI_MODULE_WZ:
+                if ($modultyp != 'wiffi-wz') {
+                    $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
+                    $this->SetStatus(IS_MODULETYPEMISMATCH);
+                    return;
+                }
+                break;
+            default:
+                return;
+        }
 
         $systeminfo = $this->GetArrayElem($jdata, 'Systeminfo', '');
         $this->SendDebug(__FUNCTION__, 'Systeminfo=' . print_r($systeminfo, true), 0);
 
-		switch ($module_type) {
-			case WIFFI_MODULE_WZ:
-				$tstamp = 0;
-				/*
-				$s = $this->GetArrayElem($jdata, 'Systeminfo.wiffizeit', '');
-				if (preg_match('#^([0-9]+)\.([0-9]+)\.([0-9]+)[ ]*/([0-9]+)h([0-9]+)$#', $s, $r)) {
-					$tstamp = strtotime($r[1] . '-' . $r[2] . '-' . $r[3] . ' ' . $r[4] . ':' . $r[5] . ':00');
-				} else {
-					$this->SendDebug(__FUNCTION__, 'unable to decode date "' . $s . '"', 0);
-					$tstamp = 0;
-				}
-				*/
-				$this->SetValue('LastMessage', $tstamp);
+        switch ($module_type) {
+            case WIFFI_MODULE_WZ:
+                $tstamp = 0;
+                $this->SetValue('LastMessage', $tstamp);
 
-				$uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
-				$this->SetValue('Uptime', $uptime / 1000);
+                $uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
+                $this->SetValue('Uptime', $uptime / 1000);
 
-				$rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-				$this->SetValue('WifiStrength', $rssi);
+                $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
+                $this->SetValue('WifiStrength', $rssi);
 
-				$this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
-				break;
-		}
+                $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
+                break;
+        }
 
         $fieldMap = $this->getFieldMap();
         $this->SendDebug(__FUNCTION__, 'fieldMap="' . print_r($fieldMap, true) . '"', 0);
@@ -396,27 +393,27 @@ class Wiffi extends IPSModule
             }
         }
 
-		switch ($module_type) {
-			case WIFFI_MODULE_WZ:
-				$with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
-				if ($with_heatindex) {
-					$wz_temperatur = $this->GetValue('wz_temperatur');
-					$wz_feuchte_rel = $this->GetValue('wz_feuchte_rel');
-					$v = $this->calcHeatindex($wz_temperatur, $wz_feuchte_rel);
-					$this->SetValue('Heatindex', $v);
-				}
+        switch ($module_type) {
+            case WIFFI_MODULE_WZ:
+                $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
+                if ($with_heatindex) {
+                    $wz_temperatur = $this->GetValue('wz_temperatur');
+                    $wz_feuchte_rel = $this->GetValue('wz_feuchte_rel');
+                    $v = $this->calcHeatindex($wz_temperatur, $wz_feuchte_rel);
+                    $this->SetValue('Heatindex', $v);
+                }
 
-				$with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
-				if ($with_absolute_pressure) {
-					$wz_baro = $this->GetValue('wz_baro');
-					$wz_temp= $this->GetValue('wz_temp');
-					$altitude = $this->ReadPropertyInteger('altitude');
-					$v = $this->calcAbsolutePressure($wz_baro, $wz_temp, $altitude);
-					$this->SetValue('AbsolutePressure', $v);
-				}
-				break;
-			default:
-				break;
+                $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
+                if ($with_absolute_pressure) {
+                    $wz_baro = $this->GetValue('wz_baro');
+                    $wz_temp = $this->GetValue('wz_temp');
+                    $altitude = $this->ReadPropertyInteger('altitude');
+                    $v = $this->calcAbsolutePressure($wz_baro, $wz_temp, $altitude);
+                    $this->SetValue('AbsolutePressure', $v);
+                }
+                break;
+            default:
+                break;
         }
 
         $this->SetValue('LastUpdate', time());
@@ -461,13 +458,13 @@ class Wiffi extends IPSModule
                 'prof'   => 'Wiffi.absHumidity',
             ],
             [
-                'ident'  => 'wz_baro"',
+                'ident'  => 'wz_baro',
                 'desc'   => 'Air pressure',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Pressure',
             ],
             [
-                'ident'  => 'wz_luftdrucktrend"',
+                'ident'  => 'wz_luftdrucktrend',
                 'desc'   => 'Trend of air pressure',
                 'type'   => VARIABLETYPE_STRING,
             ],
@@ -479,12 +476,12 @@ class Wiffi extends IPSModule
             ],
             [
                 'ident'  => 'wz_motion_left',
-                'desc'   => 'Left motion left',
+                'desc'   => 'Left motion detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.MotionDetector',
             ],
             [
-                'ident'  => 'wz_motion',
+                'ident'  => 'wz_motion_right',
                 'desc'   => 'Right motion detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.MotionDetector',
@@ -513,20 +510,20 @@ class Wiffi extends IPSModule
                 'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.Azimut',
             ],
-	/*
+            /*
 'ident'		=> 'wz_buzzer", "desc": "Buzzer", "type": "boolean"
 'ident'		=> 'wz_relais", "desc": "Relais", "type": "boolean",
-	*/
+             */
         ];
 
-		$module_type = $this->ReadPropertyInteger('module_type');
-		switch ($module_type) {
-			case WIFFI_MODULE_WZ:
-				$map = $map_wz;
-				break;
-			default:
-				$map = [];
-		}
+        $module_type = $this->ReadPropertyInteger('module_type');
+        switch ($module_type) {
+            case WIFFI_MODULE_WZ:
+                $map = $map_wz;
+                break;
+            default:
+                $map = [];
+        }
         return $map;
     }
 
