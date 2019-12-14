@@ -430,7 +430,7 @@ class Wiffi extends IPSModule
             [
                 'ident'  => 'wz_co2',
                 'desc'   => 'CO2',
-                'type'   => VARIABLETYPE_FLOAT,
+                'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.CO2',
             ],
             [
