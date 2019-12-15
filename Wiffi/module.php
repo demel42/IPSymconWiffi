@@ -269,18 +269,34 @@ class Wiffi extends IPSModule
         $jmsg = json_decode($msg, true);
         $data = utf8_decode($jmsg['Buffer']);
 
-        $rdata = $this->GetMultiBuffer('Data');
-        if (substr($data, -1) == chr(4)) {
-            $ndata = $rdata . substr($data, 0, -1);
-            $jdata = json_decode($ndata, true);
-            if ($jdata == '') {
-                $this->SendDebug(__FUNCTION__, 'json_error=' . json_last_error_msg() . ', data=' . $ndata, 0);
-            } else {
-                $this->ProcessData($jdata);
-            }
-            $ndata = '';
-        } else {
-            $ndata = $rdata . $data;
+        switch ((int) $jmsg['Type']) {
+            case 0: /* Data */
+                $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => received: ' . $data, 0);
+                $rdata = $this->GetMultiBuffer('Data');
+                if (substr($data, -1) == chr(4)) {
+                    $ndata = $rdata . substr($data, 0, -1);
+                } else {
+                    $ndata = $rdata . $data;
+                }
+                break;
+            case 1: /* Connected */
+                $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => connected', 0);
+                $ndata = '';
+                break;
+            case 2: /* Disconnected */
+                $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => disonnected', 0);
+                $rdata = $this->GetMultiBuffer('Data');
+                $jdata = json_decode($rdata, true);
+                if ($jdata == '') {
+                    $this->SendDebug(__FUNCTION__, 'json_error=' . json_last_error_msg() . ', data=' . $ndata, 0);
+                } else {
+                    $this->ProcessData($jdata);
+                }
+                $ndata = '';
+                break;
+            default:
+                $this->SendDebug(__FUNCTION__, 'unknown Type, jmsg=' . print_r($jmsg, true), 0);
+                break;
         }
         $this->SetMultiBuffer('Data', $ndata);
     }
@@ -309,7 +325,12 @@ class Wiffi extends IPSModule
 
         switch ($module_type) {
             case WIFFI_MODULE_WZ:
-                $tstamp = 0;
+                $s = $this->GetArrayElem($jdata, 'Systeminfo.wiffizeit', '');
+                if (preg_match('#^[ ]*([0-9]+)[ ]+([0-9]+):([0-9]+)$#', $s, $r)) {
+                    $tstamp = strtotime($r[2] . ':' . $r[3] . ':00');
+                } else {
+                    $tstamp = 0;
+                }
                 $this->SetValue('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
@@ -343,7 +364,6 @@ class Wiffi extends IPSModule
 
         $vars = $this->GetArrayElem($jdata, 'vars', '');
         foreach ($vars as $var) {
-            $this->SendDebug(__FUNCTION__, 'var=' . print_r($var, true), 0);
             $ident = $this->GetArrayElem($var, 'homematic_name', '');
             $value = $this->GetArrayElem($var, 'value', '');
 
@@ -374,7 +394,7 @@ class Wiffi extends IPSModule
                         continue;
                     }
 
-                    $this->SendDebug(__FUNCTION__, 'found ident "' . $ident . '", value=' . $value, 0);
+                    $this->SendDebug(__FUNCTION__, 'use ident "' . $ident . '", value=' . $value, 0);
 
                     if ($ident == 'wz_luftdrucktrend') {
                         $value = str_replace('_', ' ', $value);
@@ -510,10 +530,18 @@ class Wiffi extends IPSModule
                 'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.Azimut',
             ],
-            /*
-'ident'		=> 'wz_buzzer", "desc": "Buzzer", "type": "boolean"
-'ident'		=> 'wz_relais", "desc": "Relais", "type": "boolean",
-             */
+            [
+                'ident'  => 'wz_buzzer',
+                'desc'   => 'Buzzer',
+                'type'   => VARIABLETYPE_BOOLEAN,
+                'prof'   => '~Alert',
+            ],
+            [
+                'ident'  => 'wz_relais',
+                'desc'   => 'Relais',
+                'type'   => VARIABLETYPE_BOOLEAN,
+                'prof'   => '~Alert',
+            ],
         ];
 
         $module_type = $this->ReadPropertyInteger('module_type');
