@@ -96,7 +96,7 @@ damit schickt Wiffi minütlich die Daten sowie bei bestimmten Zuständen (Regen 
 
 | Eigenschaft                           | Typ      | Standardwert | Beschreibung |
 | :------------------------------------ | :------  | :----------- | :----------- |
-| Modul-Typ                             | integer  |              | 1=Wiffi-WZ, 2=Wiffi 3 |
+| Modultyp                              | integer  |              | 1=Wiffi-WZ, 2=Wiffi 3 |
 |                                       |          |              | |
 | Höhe des Modules über NN              | integer  | 0            | |
 |                                       |          |              | |
@@ -128,5 +128,5 @@ GUIDs
 
 ## 7. Versions-Historie
 
-- 1.0 @ xx.xx.xxxx xx:xx<br>
+- 1.0 @ 16.12.2019 12:36<br>
   Initiale Version
