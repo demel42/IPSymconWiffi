@@ -26,7 +26,7 @@ Getestet mit der Wiffi-WZ-Version **106**.
 ## 2. Voraussetzungen
 
  - IP-Symcon ab Version 5<br>
- - ein Wiffi-Wohnzimmersensor, weitere Wiffi-Module können bei Bedarf und Unterstützung implementiert werden
+ - ein _Wiffi-Wohnzimmersensor_ oder _Wiffi 3.0_, weitere Wiffi-Module können bei Bedarf und Unterstützung implementiert werden
 
 ## 3. Installation
 
@@ -96,6 +96,8 @@ damit schickt Wiffi minütlich die Daten sowie bei bestimmten Zuständen (Regen 
 
 | Eigenschaft                           | Typ      | Standardwert | Beschreibung |
 | :------------------------------------ | :------  | :----------- | :----------- |
+| Modul-Typ                             | integer  |              | 1=Wiffi-WZ, 2=Wiffi 3 |
+|                                       |          |              | |
 | Höhe des Modules über NN              | integer  | 0            | |
 |                                       |          |              | |
 | Hitzeindex                            | boolean  | false        | Hitzeindex berechnen |
@@ -109,10 +111,11 @@ Es werden folgende Variablenprofile angelegt:
 Wiffi.MotionnDetector, Wiffi.NoiseDetector
 
 * Integer<br>
-Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.sec, Wiffi.Wifi
+Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi,
 
 * Float<br>
-Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur
+Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur,
+Wiffi.VOC,
 
 * String<br>
 

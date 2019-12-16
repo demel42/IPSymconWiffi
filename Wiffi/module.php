@@ -7,6 +7,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 if (!defined('WIFFI_MODULE_NONE')) {
     define('WIFFI_MODULE_NONE', 0);
     define('WIFFI_MODULE_WZ', 1);
+    define('WIFFI_MODULE_3', 2);
 }
 
 class Wiffi extends IPSModule
@@ -19,34 +20,11 @@ class Wiffi extends IPSModule
 
         $this->RegisterPropertyInteger('module_type', WIFFI_MODULE_NONE);
         $this->RegisterPropertyString('use_fields', '[]');
+        $this->RegisterPropertyString('fields', '[]');
 
         $this->RegisterPropertyInteger('altitude', false);
         $this->RegisterPropertyBoolean('with_absolute_pressure', false);
         $this->RegisterPropertyBoolean('with_heatindex', false);
-
-        $this->CreateVarProfile('Wiffi.Wifi', VARIABLETYPE_INTEGER, ' dBm', 0, 0, 0, 0, 'Intensity');
-
-        $this->CreateVarProfile('Wiffi.sec', VARIABLETYPE_INTEGER, ' s', 0, 0, 0, 0, 'Clock');
-        $this->CreateVarProfile('Wiffi.min', VARIABLETYPE_INTEGER, ' m', 0, 0, 0, 0, 'Clock');
-        $this->CreateVarProfile('Wiffi.hour', VARIABLETYPE_INTEGER, ' h', 0, 0, 0, 0, 'Clock');
-
-        $this->CreateVarProfile('Wiffi.Temperatur', VARIABLETYPE_FLOAT, ' °C', -10, 30, 0, 1, 'Temperature');
-        $this->CreateVarProfile('Wiffi.Humidity', VARIABLETYPE_FLOAT, ' %', 0, 0, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.Pressure', VARIABLETYPE_FLOAT, ' mbar', 0, 0, 0, 0, 'Gauge');
-        $this->CreateVarProfile('Wiffi.Heatindex', VARIABLETYPE_FLOAT, ' °C', 0, 100, 0, 0, 'Temperature');
-        $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.Pressure', VARIABLETYPE_FLOAT, ' mbar', 500, 1200, 0, 0, 'Gauge');
-        $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
-        $this->CreateVarProfile('Wiffi.Azimut', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
-        $this->CreateVarProfile('Wiffi.Elevation', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
-
-        $associations = [];
-        $associations[] = ['Wert' =>    0, 'Name' => '%d', 'Farbe' => 0x008000];
-        $associations[] = ['Wert' => 1000, 'Name' => '%d', 'Farbe' => 0xFFFF00];
-        $associations[] = ['Wert' => 1250, 'Name' => '%d', 'Farbe' => 0xFF8000];
-        $associations[] = ['Wert' => 1300, 'Name' => '%d', 'Farbe' => 0xFF0000];
-        $this->CreateVarProfile('Wiffi.CO2', VARIABLETYPE_INTEGER, ' ppm', 250, 2000, 0, 1, 'Gauge', $associations);
 
         $associations = [];
         $associations[] = ['Wert' => false, 'Name' => $this->Translate('Off'), 'Farbe' => -1];
@@ -58,6 +36,38 @@ class Wiffi extends IPSModule
         $associations[] = ['Wert' => true,  'Name' => $this->Translate('On'), 'Farbe' => 0xEE0000];
         $this->CreateVarProfile('Wiffi.MotionDetector', VARIABLETYPE_BOOLEAN, '', 0, 0, 0, 0, '', $associations);
 
+        $this->CreateVarProfile('Wiffi.Wifi', VARIABLETYPE_INTEGER, ' dBm', 0, 0, 0, 0, 'Intensity');
+        $this->CreateVarProfile('Wiffi.sec', VARIABLETYPE_INTEGER, ' s', 0, 0, 0, 0, 'Clock');
+        $this->CreateVarProfile('Wiffi.min', VARIABLETYPE_INTEGER, ' m', 0, 0, 0, 0, 'Clock');
+        $this->CreateVarProfile('Wiffi.Azimut', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
+        $this->CreateVarProfile('Wiffi.Elevation', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
+        $this->CreateVarProfile('Wiffi.Percent', VARIABLETYPE_INTEGER, ' %', 0, 0, 0, 0, '');
+
+        $associations = [];
+        $associations[] = ['Wert' =>    0, 'Name' => '%d', 'Farbe' => 0x008000];
+        $associations[] = ['Wert' => 1000, 'Name' => '%d', 'Farbe' => 0xFFFF00];
+        $associations[] = ['Wert' => 1250, 'Name' => '%d', 'Farbe' => 0xFF8000];
+        $associations[] = ['Wert' => 1300, 'Name' => '%d', 'Farbe' => 0xFF0000];
+        $this->CreateVarProfile('Wiffi.CO2', VARIABLETYPE_INTEGER, ' ppm', 250, 2000, 0, 1, 'Gauge', $associations);
+
+        $associations = [];
+        $associations[] = ['Wert' =>   0, 'Name' => '%d', 'Farbe' => 0x00E400];
+        $associations[] = ['Wert' =>  50, 'Name' => '%d', 'Farbe' => 0xFFFF00];
+        $associations[] = ['Wert' => 100, 'Name' => '%d', 'Farbe' => 0xFF7E00];
+        $associations[] = ['Wert' => 150, 'Name' => '%d', 'Farbe' => 0xFF0000];
+        $associations[] = ['Wert' => 200, 'Name' => '%d', 'Farbe' => 0x99004C];
+        $associations[] = ['Wert' => 300, 'Name' => '%d', 'Farbe' => 0x595959];
+        $this->CreateVarProfile('Wiffi.IAQ', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Fog', $associations);
+
+        $this->CreateVarProfile('Wiffi.Temperatur', VARIABLETYPE_FLOAT, ' °C', -10, 30, 0, 1, 'Temperature');
+        $this->CreateVarProfile('Wiffi.Humidity', VARIABLETYPE_FLOAT, ' %', 0, 0, 0, 0, 'Drops');
+        $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 0, 'Drops');
+        $this->CreateVarProfile('Wiffi.Pressure', VARIABLETYPE_FLOAT, ' mbar', 0, 0, 0, 0, 'Gauge');
+        $this->CreateVarProfile('Wiffi.Heatindex', VARIABLETYPE_FLOAT, ' °C', 0, 100, 0, 0, 'Temperature');
+        $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
+        $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
+        $this->CreateVarProfile('Wiffi.VOC', VARIABLETYPE_FLOAT, '', 0, 0, 0, 2, 'Gauge');
+
         $this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
     }
 
@@ -67,10 +77,14 @@ class Wiffi extends IPSModule
 
         $status = IS_ACTIVE;
 
+        $module_type = $this->ReadPropertyInteger('module_type');
+
         $vpos = 1;
+        $varList = [];
+
         $identList = [];
         $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
-        $fieldMap = $this->getFieldMap();
+        $fieldMap = $this->getFieldMap($module_type);
         foreach ($fieldMap as $map) {
             $ident = $this->GetArrayElem($map, 'ident', '');
             $use = false;
@@ -88,6 +102,7 @@ class Wiffi extends IPSModule
             $varprof = $this->GetArrayElem($map, 'prof', '');
             $this->SendDebug(__FUNCTION__, 'register variable: ident=' . $ident . ', vartype=' . $vartype . ', varprof=' . $varprof . ', use=' . $this->bool2str($use), 0);
             $this->MaintainVariable($ident, $this->Translate($desc), $vartype, $varprof, $vpos++, $use);
+            $varList[] = $ident;
         }
 
         $vpos = 80;
@@ -97,8 +112,9 @@ class Wiffi extends IPSModule
         if ($with_heatindex) {
             switch ($module_type) {
                 case WIFFI_MODULE_WZ:
-                    if (!(in_array('wz_temp', $identList) && in_array('wz_feuchte_rel', $identList))) {
-                        $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "wz_temp", "wz_feuchte_rel"', 0);
+                case WIFFI_MODULE_3:
+                    if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
+                        $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "temp", "feuchte_rel"', 0);
                         $with_heatindex = false;
                         $status = IS_INVALIDCONFIG;
                     }
@@ -115,10 +131,11 @@ class Wiffi extends IPSModule
         if ($with_absolute_pressure) {
             switch ($module_type) {
                 case WIFFI_MODULE_WZ:
-                    if (!(in_array('wz_temp', $identList) && in_array('wz_feuchte_rel', $identList))) {
+                case WIFFI_MODULE_3:
+                    if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
                         $altitude = $this->ReadPropertyInteger('altitude');
-                        if (!(in_array('wz_baro', $identList) && in_array('wz_temp', $identList) && $altitude > 0)) {
-                            $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" needs "wz_baro", "wz_temp" and "altitude"', 0);
+                        if (!(in_array('baro', $identList) && in_array('temp', $identList) && $altitude > 0)) {
+                            $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" needs "baro", "temp" and "altitude"', 0);
                             $with_absolute_pressure = false;
                             $status = IS_INVALIDCONFIG;
                         }
@@ -139,7 +156,63 @@ class Wiffi extends IPSModule
         $this->MaintainVariable('Uptime', $this->Translate('Uptime'), VARIABLETYPE_INTEGER, 'Wiffi.sec', $vpos++, true);
         $this->MaintainVariable('WifiStrength', $this->Translate('wifi-signal'), VARIABLETYPE_INTEGER, 'Wiffi.Wifi', $vpos++, true);
 
+        $objList = [];
+        $this->findVariables($this->InstanceID, $objList);
+        foreach ($objList as $obj) {
+            $ident = $obj['ObjectIdent'];
+            if (!in_array($ident, $varList)) {
+                $this->SendDebug(__FUNCTION__, 'unregister variable: ident=' . $ident, 0);
+                $this->UnregisterVariable($ident);
+            }
+        }
+
         $this->SetStatus($status);
+    }
+
+    private function findVariables($objID, &$objList)
+    {
+        $chldIDs = IPS_GetChildrenIDs($objID);
+        foreach ($chldIDs as $chldID) {
+            $obj = IPS_GetObject($chldID);
+            switch ($obj['ObjectType']) {
+                case OBJECTTYPE_VARIABLE:
+                    if (preg_match('#^[a-z_]+$#', $obj['ObjectIdent'], $r)) {
+                        $objList[] = $obj;
+                    }
+                    break;
+                case OBJECTTYPE_CATEGORY:
+                    $this->findVariables($chldID, $objList);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public function UpdateFields(int $module_type)
+    {
+        $values = [];
+        $new_fields = [];
+
+        $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
+        $fieldMap = $this->getFieldMap($module_type);
+
+        foreach ($fieldMap as $map) {
+            $ident = $this->GetArrayElem($map, 'ident', '');
+            $desc = $this->GetArrayElem($map, 'desc', '');
+            $use = false;
+            foreach ($use_fields as $field) {
+                if ($ident == $this->GetArrayElem($field, 'ident', '')) {
+                    $use = (bool) $this->GetArrayElem($field, 'use', false);
+                    $new_fields[] = $field;
+                    break;
+                }
+            }
+            $values[] = ['ident' => $ident, 'desc' => $this->Translate($desc), 'use' => $use];
+        }
+
+        IPS_SetProperty($this->InstanceID, 'use_fields', json_encode($new_fields));
+        $this->UpdateFormField('use_fields', 'values', json_encode($values));
     }
 
     public function GetConfigurationForm()
@@ -161,16 +234,19 @@ class Wiffi extends IPSModule
     protected function GetFormElements()
     {
         $formElements = [];
-        $formElements[] = ['type' => 'Label', 'label' => 'Wiffi'];
+        $formElements[] = ['type' => 'Label', 'caption' => 'Wiffi'];
 
         $opts_module_type = [];
-        $opts_module_type[] = ['label' => $this->Translate('none'), 'value' => WIFFI_MODULE_NONE];
-        $opts_module_type[] = ['label' => $this->Translate('Wiffi-WZ'), 'value' => WIFFI_MODULE_WZ];
+        $opts_module_type[] = ['caption' => $this->Translate('none'), 'value' => WIFFI_MODULE_NONE];
+        $opts_module_type[] = ['caption' => $this->Translate('Wiffi-WZ'), 'value' => WIFFI_MODULE_WZ];
+        $opts_module_type[] = ['caption' => $this->Translate('Wiffi 3'), 'value' => WIFFI_MODULE_3];
 
-        $formElements[] = ['type' => 'Select', 'name' => 'module_type', 'caption' => 'Module type', 'options' => $opts_module_type];
+        $formElements[] = ['type' => 'Select', 'name' => 'module_type', 'caption' => 'Module type', 'options' => $opts_module_type, 'onChange' => 'Wiffi_UpdateFields($id, $module_type);'];
+
+        $module_type = $this->ReadPropertyInteger('module_type');
 
         $values = [];
-        $fieldMap = $this->getFieldMap();
+        $fieldMap = $this->getFieldMap($module_type);
         foreach ($fieldMap as $map) {
             $ident = $this->GetArrayElem($map, 'ident', '');
             $desc = $this->GetArrayElem($map, 'desc', '');
@@ -199,7 +275,6 @@ class Wiffi extends IPSModule
         ];
 
         $items = [];
-
         $items[] = [
             'type'     => 'List',
             'name'     => 'use_fields',
@@ -214,13 +289,11 @@ class Wiffi extends IPSModule
         $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Variables'];
 
         $items = [];
-
         $items[] = [
             'type'    => 'NumberSpinner',
             'name'    => 'altitude',
             'caption' => 'Module altitude'
         ];
-
         $items[] = [
             'type'    => 'Label',
             'caption' => 'additional Calculations'
@@ -229,16 +302,17 @@ class Wiffi extends IPSModule
         $module_type = $this->ReadPropertyInteger('module_type');
         switch ($module_type) {
             case WIFFI_MODULE_WZ:
+            case WIFFI_MODULE_3:
                 $items[] = [
                     'type'    => 'CheckBox',
                     'name'    => 'with_heatindex',
-                    'caption' => ' ... Heatindex (needs "wz_temp", "wz_feuchte_rel")'
+                    'caption' => ' ... Heatindex (needs "temp", "feuchte_rel")'
                 ];
 
                 $items[] = [
                     'type'    => 'CheckBox',
                     'name'    => 'with_absolute_pressure',
-                    'caption' => ' ... absolute pressure (needs "wz_baro", "wz_temp" and the altitude)'
+                    'caption' => ' ... absolute pressure (needs "baro", "temp" and the altitude)'
                 ];
                 break;
             default:
@@ -316,6 +390,13 @@ class Wiffi extends IPSModule
                     return;
                 }
                 break;
+            case WIFFI_MODULE_3:
+                if ($modultyp != 'wiffi-3.0') {
+                    $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
+                    $this->SetStatus(IS_MODULETYPEMISMATCH);
+                    return;
+                }
+                break;
             default:
                 return;
         }
@@ -341,9 +422,26 @@ class Wiffi extends IPSModule
 
                 $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
+            case WIFFI_MODULE_3:
+                $s = $this->GetArrayElem($jdata, 'Systeminfo.zeitpunkt', '');
+                if (preg_match('#^([0-9]+)\.([0-9]+)\.([0-9]+)[ ]*/([0-9]+)h([0-9]+)$#', $s, $r)) {
+                    $tstamp = strtotime($r[1] . '-' . $r[2] . '-' . $r[3] . ' ' . $r[4] . ':' . $r[5] . ':00');
+                } else {
+                    $tstamp = 0;
+                }
+                $this->SetValue('LastMessage', $tstamp);
+
+                $uptime = $this->GetArrayElem($jdata, 'Systeminfo.sec_seit_reset', 0);
+                $this->SetValue('Uptime', $uptime);
+
+                $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
+                $this->SetValue('WifiStrength', $rssi);
+
+                $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
+                break;
         }
 
-        $fieldMap = $this->getFieldMap();
+        $fieldMap = $this->getFieldMap($module_type);
         $this->SendDebug(__FUNCTION__, 'fieldMap="' . print_r($fieldMap, true) . '"', 0);
         $identV = [];
         foreach ($fieldMap as $map) {
@@ -365,6 +463,9 @@ class Wiffi extends IPSModule
         $vars = $this->GetArrayElem($jdata, 'vars', '');
         foreach ($vars as $var) {
             $ident = $this->GetArrayElem($var, 'homematic_name', '');
+            if (preg_match('#^[^_]+_(.+)$#', $ident, $r)) {
+                $ident = $r[1];
+            }
             $value = $this->GetArrayElem($var, 'value', '');
 
             $found = false;
@@ -396,7 +497,7 @@ class Wiffi extends IPSModule
 
                     $this->SendDebug(__FUNCTION__, 'use ident "' . $ident . '", value=' . $value, 0);
 
-                    if ($ident == 'wz_luftdrucktrend') {
+                    if (in_array($ident, ['luftdrucktrend', 'iaq'])) {
                         $value = str_replace('_', ' ', $value);
                     }
 
@@ -415,20 +516,21 @@ class Wiffi extends IPSModule
 
         switch ($module_type) {
             case WIFFI_MODULE_WZ:
+            case WIFFI_MODULE_3:
                 $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
                 if ($with_heatindex) {
-                    $wz_temperatur = $this->GetValue('wz_temperatur');
-                    $wz_feuchte_rel = $this->GetValue('wz_feuchte_rel');
-                    $v = $this->calcHeatindex($wz_temperatur, $wz_feuchte_rel);
+                    $temperatur = $this->GetValue('temperatur');
+                    $feuchte_rel = $this->GetValue('feuchte_rel');
+                    $v = $this->calcHeatindex($temperatur, $feuchte_rel);
                     $this->SetValue('Heatindex', $v);
                 }
 
                 $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
                 if ($with_absolute_pressure) {
-                    $wz_baro = $this->GetValue('wz_baro');
-                    $wz_temp = $this->GetValue('wz_temp');
+                    $baro = $this->GetValue('baro');
+                    $temp = $this->GetValue('temp');
                     $altitude = $this->ReadPropertyInteger('altitude');
-                    $v = $this->calcAbsolutePressure($wz_baro, $wz_temp, $altitude);
+                    $v = $this->calcAbsolutePressure($baro, $temp, $altitude);
                     $this->SetValue('AbsolutePressure', $v);
                 }
                 break;
@@ -439,115 +541,254 @@ class Wiffi extends IPSModule
         $this->SetValue('LastUpdate', time());
     }
 
-    private function getFieldMap()
+    private function getFieldMap(int $module_type)
     {
         $map_wz = [
             [
-                'ident'  => 'wz_ip',
+                'ident'  => 'ip',
                 'desc'   => 'IP-address',
                 'type'   => VARIABLETYPE_STRING,
             ],
             [
-                'ident'  => 'wz_co2',
+                'ident'  => 'co2',
                 'desc'   => 'CO2',
                 'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.CO2',
             ],
             [
-                'ident'  => 'wz_temp',
+                'ident'  => 'temp',
                 'desc'   => 'Temperature',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Temperatur',
             ],
             [
-                'ident'  => 'wz_taupunkt',
+                'ident'  => 'taupunkt',
                 'desc'   => 'Dewpoint',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Dewpoint',
             ],
             [
-                'ident'  => 'wz_feuchte',
+                'ident'  => 'feuchte',
                 'desc'   => 'Humidity',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Humidity',
             ],
             [
-                'ident'  => 'wz_feuchte_abs',
+                'ident'  => 'feuchte_abs',
                 'desc'   => 'Absolute humidity',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.absHumidity',
             ],
             [
-                'ident'  => 'wz_baro',
+                'ident'  => 'baro',
                 'desc'   => 'Air pressure',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Pressure',
             ],
             [
-                'ident'  => 'wz_luftdrucktrend',
+                'ident'  => 'luftdrucktrend',
                 'desc'   => 'Trend of air pressure',
                 'type'   => VARIABLETYPE_STRING,
             ],
             [
-                'ident'  => 'wz_lux',
+                'ident'  => 'lux',
                 'desc'   => 'Brightness',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.Lux',
             ],
             [
-                'ident'  => 'wz_motion_left',
+                'ident'  => 'motion_left',
                 'desc'   => 'Left motion detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.MotionDetector',
             ],
             [
-                'ident'  => 'wz_motion_right',
+                'ident'  => 'motion_right',
                 'desc'   => 'Right motion detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.MotionDetector',
             ],
             [
-                'ident'  => 'wz_motion',
+                'ident'  => 'motion',
                 'desc'   => 'Motion detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.MotionDetector',
             ],
             [
-                'ident'  => 'wz_noise',
+                'ident'  => 'noise',
                 'desc'   => 'Noise detected',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => 'Wiffi.NoiseDetector',
             ],
             [
-                'ident'  => 'wz_elevation',
+                'ident'  => 'elevation',
                 'desc'   => 'Sun elevation',
                 'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.Elevation',
             ],
             [
-                'ident'  => 'wz_azimut',
+                'ident'  => 'azimut',
                 'desc'   => 'Sun azimut',
                 'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.Azimut',
             ],
             [
-                'ident'  => 'wz_buzzer',
+                'ident'  => 'buzzer',
                 'desc'   => 'Buzzer',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => '~Alert',
             ],
             [
-                'ident'  => 'wz_relais',
+                'ident'  => 'relais',
                 'desc'   => 'Relais',
                 'type'   => VARIABLETYPE_BOOLEAN,
                 'prof'   => '~Alert',
             ],
         ];
+        $map_3 = [
+            [
+                'ident'  => 'ip',
+                'desc'   => 'IP-address',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'co2',
+                'desc'   => 'CO2',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.CO2',
+            ],
+            [
+                'ident'  => 'voc',
+                'desc'   => 'VOC',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.VOC',
+            ],
+            [
+                'ident'  => 'temp',
+                'desc'   => 'Temperature',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Temperatur',
+            ],
+            [
+                'ident'  => 'taupunkt',
+                'desc'   => 'Dewpoint',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Dewpoint',
+            ],
+            [
+                'ident'  => 'feuchte',
+                'desc'   => 'Humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Humidity',
+            ],
+            [
+                'ident'  => 'feuchte_abs',
+                'desc'   => 'Absolute humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.absHumidity',
+            ],
+            [
+                'ident'  => 'baro',
+                'desc'   => 'Air pressure',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Pressure',
+            ],
+            [
+                'ident'  => 'luftdrucktrend',
+                'desc'   => 'Trend of air pressure',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'lux',
+                'desc'   => 'Brightness',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Lux',
+            ],
+            [
+                'ident'  => 'motion',
+                'desc'   => 'Motion detected',
+                'type'   => VARIABLETYPE_BOOLEAN,
+                'prof'   => 'Wiffi.MotionDetector',
+            ],
+            [
+                'ident'  => 'noise',
+                'desc'   => 'Noise detected',
+                'type'   => VARIABLETYPE_BOOLEAN,
+                'prof'   => 'Wiffi.NoiseDetector',
+            ],
+            [
+                'ident'  => 'elevation',
+                'desc'   => 'Sun elevation',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.Elevation',
+            ],
+            [
+                'ident'  => 'azimut',
+                'desc'   => 'Sun azimut',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.Azimut',
+            ],
+            [
+                'ident'  => 'minuten_vor_sa',
+                'desc'   => 'Minutes from sunrise',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.min',
+            ],
+            [
+                'ident'  => 'minuten_vor_su',
+                'desc'   => 'Minutes from sunset',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.min',
+            ],
+            [
+                'ident'  => 'schalter',
+                'desc'   => 'Switch',
+                'type'   => VARIABLETYPE_BOOLEAN,
+                'prof'   => '~Switch',
+            ],
 
-        $module_type = $this->ReadPropertyInteger('module_type');
+            [
+                'ident'  => 'iaq',
+                'desc'   => 'Airquality',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'iaq_value',
+                'desc'   => 'Airquality (IAQ-Value)',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.IAQ',
+            ],
+            [
+                'ident'  => 'iaq_rr0_value',
+                'desc'   => 'Airquality (R/R0)',
+                'type'   => VARIABLETYPE_INTEGER,
+            ],
+            [
+                'ident'  => 'noise_value',
+                'desc'   => 'Noise-Value',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.Percent',
+            ],
+            [
+                'ident'  => 'noise_peak',
+                'desc'   => 'Noise-Peak (60s)',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.Percent',
+            ],
+            [
+                'ident'  => 'noise_avg',
+                'desc'   => 'Noise-Average (60s)',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.Percent',
+            ],
+        ];
+
         switch ($module_type) {
             case WIFFI_MODULE_WZ:
                 $map = $map_wz;
+                break;
+            case WIFFI_MODULE_3:
+                $map = $map_3;
                 break;
             default:
                 $map = [];

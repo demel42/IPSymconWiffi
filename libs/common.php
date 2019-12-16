@@ -213,7 +213,7 @@ trait WiffiCommon
         $formStatus[] = ['code' => IS_NOTCREATED, 'icon' => 'inactive', 'caption' => 'Instance is not created'];
 
         $formStatus[] = ['code' => IS_INVALIDCONFIG, 'icon' => 'error', 'caption' => 'Instance is inactive (invalid configuration)'];
-        $formStatus[] = ['code' => IS_MODULETYPEMISMATCH, 'icon' => 'error', 'caption' => 'Instance is inactive (module mismatch)'];
+        $formStatus[] = ['code' => IS_MODULETYPEMISMATCH, 'icon' => 'error', 'caption' => 'Instance is inactive (wrong wiffi-module)'];
 
         return $formStatus;
     }

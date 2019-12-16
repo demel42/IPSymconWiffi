@@ -16,10 +16,10 @@
 			"Options": "Optionen",
 			"Module altitude": "Höhe des Modules",
 			"additional Calculations": "zusätzliche Rechenwerte",
-			" ... Heatindex (needs \"wz_temp\", \"wz_feuchte_rel\")":
-				" ... Hitzeindex (benötigt \"wz_temp\", \"wz_feuchte_rel\")",
-			" ... absolute pressure (needs \"wz_baro\", \"wz_temp\" and the altitude)":
-				" ... absoluter Luftdruck (benötigt \"wz_baro\", \"wz_temp\" und die Höhe)",
+			" ... Heatindex (needs \"temp\", \"feuchte_rel\")":
+				" ... Hitzeindex (benötigt \"temp\", \"feuchte_rel\")",
+			" ... absolute pressure (needs \"baro\", \"temp\" and the altitude)":
+				" ... absoluter Luftdruck (benötigt \"baro\", \"temp\" und die Höhe)",
 
 			"Module description": "Modulbeschreibung",
 
@@ -31,18 +31,29 @@
 			"Absolute humidity": "absolute Luftfeuchtigkeit",
 			"Absolute pressure": "absoluter Luftdruck",
 			"Air pressure": "Luftdruck",
+			"Airquality (IAQ-Value)": "Luftqualität (IAQ-Wert)",
+			"Airquality": "Luftqualität",
+			"Airquality (R/R0)": "Luftqualität (R/R0)",
 			"Brightness": "Helligkeit",
+			"Buzzer": "Summer",
 			"CO2": "CO2",
 			"Dewpoint": "Taupunkt",
 			"Heatindex": "Hitzeindex",
 			"Humidity": "Luftfeuchtigkeit",
 			"IP-address": "IP-Adresse",
 			"Left motion detected": "Bewegung links erkannt",
+			"Minutes from sunrise": "Minuten vor dem Sonnenaufgang",
+			"Minutes from sunset": "Minuten vor dem Sonnenuntergang",
 			"Motion detected": "Bewegung erkannt",
+			"Noise-Average (60s)": "Geräusch-Mittelwert (60s)",
 			"Noise detected": "Geräusch erkannt",
+			"Noise-Peak (60s)": "Geräusch-Spitzenwert (60s)",
+			"Noise-Value": "Geräusch-Wert",
+			"Relais": "Relais",
 			"Right motion detected": "Bewegung rechts erkannt",
 			"Sun azimut": "Sonnenrichtung",
 			"Sun elevation": "Sonnenhöhe",
+			"Switch": "Schalter",
 			"Temperature": "Temperatur",
 			"Trend of air pressure": "Trend des Luftdrucks",
 
@@ -55,7 +66,7 @@
 			"Instance is inactive": "Instanz ist inaktiv",
 			"Instance is not created": "Instanz wurde nicht erzeugt",
 			"Instance is inactive (invalid configuration)": "Instanz ist inaktiv (ungültige Konfiguration)",
-			"Instance is inactive (module mismatch)": "Instanz ist inaktiv (Modul stimmt nicht)"
+			"Instance is inactive (wrong wiffi-module)": "Instanz ist inaktiv (falsches Wiffi-Modul)"
 		}
 	}
 }
