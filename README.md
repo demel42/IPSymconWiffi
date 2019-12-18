@@ -19,9 +19,9 @@
 
 ## 1. Funktionsumfang
 
-Übernahme aller Wetterdaten von der "do it yourself" _Wifi-Sensor_ von ([stall.biz](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor)).
+Übernahme der Daten von dem "do it yourself" _Wifi-Sensor_ von ([stall.biz](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor)).
 
-Getestet mit der Wiffi-WZ-Version **106**.
+Getestet mit Wiffi-WZ mit der Version **106** und Wiffi 3.0 mit der Version **20**?
 
 ## 2. Voraussetzungen
 
