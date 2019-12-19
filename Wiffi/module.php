@@ -192,7 +192,6 @@ class Wiffi extends IPSModule
     public function UpdateFields(int $module_type)
     {
         $values = [];
-        $new_fields = [];
 
         $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
         $fieldMap = $this->getFieldMap($module_type);
@@ -204,14 +203,12 @@ class Wiffi extends IPSModule
             foreach ($use_fields as $field) {
                 if ($ident == $this->GetArrayElem($field, 'ident', '')) {
                     $use = (bool) $this->GetArrayElem($field, 'use', false);
-                    $new_fields[] = $field;
                     break;
                 }
             }
             $values[] = ['ident' => $ident, 'desc' => $this->Translate($desc), 'use' => $use];
         }
 
-        IPS_SetProperty($this->InstanceID, 'use_fields', json_encode($new_fields));
         $this->UpdateFormField('use_fields', 'values', json_encode($values));
     }
 
@@ -241,7 +238,13 @@ class Wiffi extends IPSModule
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi-WZ'), 'value' => WIFFI_MODULE_WZ];
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi 3'), 'value' => WIFFI_MODULE_3];
 
-        $formElements[] = ['type' => 'Select', 'name' => 'module_type', 'caption' => 'Module type', 'options' => $opts_module_type, 'onChange' => 'Wiffi_UpdateFields($id, $module_type);'];
+        $formElements[] = [
+            'type'     => 'Select',
+            'name'     => 'module_type',
+            'caption'  => 'Module type',
+            'options'  => $opts_module_type,
+            'onChange' => 'Wiffi_UpdateFields($id, $module_type);'
+        ];
 
         $module_type = $this->ReadPropertyInteger('module_type');
 
