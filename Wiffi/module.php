@@ -20,7 +20,6 @@ class Wiffi extends IPSModule
 
         $this->RegisterPropertyInteger('module_type', WIFFI_MODULE_NONE);
         $this->RegisterPropertyString('use_fields', '[]');
-        $this->RegisterPropertyString('fields', '[]');
 
         $this->RegisterPropertyInteger('altitude', false);
         $this->RegisterPropertyBoolean('with_absolute_pressure', false);
