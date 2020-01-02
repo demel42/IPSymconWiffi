@@ -130,7 +130,7 @@ GUIDs
 
 - 1.1 @ 02.01.2020 14:15
   - Fix in ReceiveData()
-  - ungenutztes Protery 'fields' entfernt
+  - ungenutztes Property 'fields' entfernt
 
 - 1.0 @ 19.12.2019 13:55
   - Initiale Version
