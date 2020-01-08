@@ -128,9 +128,10 @@ GUIDs
 
 ## 7. Versions-Historie
 
-- 1.1 @ 02.01.2020 14:15
+- 1.1 @ 08.01.2020 17:23
   - Fix in ReceiveData()
   - ungenutztes Property 'fields' entfernt
+  - bei Wechsel des Modul-Typs bleiben ausgewählte Variablen erhalten
 
 - 1.0 @ 19.12.2019 13:55
   - Initiale Version

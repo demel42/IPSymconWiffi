@@ -188,11 +188,10 @@ class Wiffi extends IPSModule
         }
     }
 
-    public function UpdateFields(int $module_type)
+    public function UpdateFields(int $module_type, object $use_fields)
     {
         $values = [];
 
-        $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
         $fieldMap = $this->getFieldMap($module_type);
 
         foreach ($fieldMap as $map) {
@@ -242,7 +241,7 @@ class Wiffi extends IPSModule
             'name'     => 'module_type',
             'caption'  => 'Module type',
             'options'  => $opts_module_type,
-            'onChange' => 'Wiffi_UpdateFields($id, $module_type);'
+            'onChange' => 'Wiffi_UpdateFields($id, $module_type, $use_fields);'
         ];
 
         $module_type = $this->ReadPropertyInteger('module_type');
