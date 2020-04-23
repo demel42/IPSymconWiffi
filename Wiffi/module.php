@@ -112,8 +112,8 @@ class Wiffi extends IPSModule
             switch ($module_type) {
                 case WIFFI_MODULE_WZ:
                 case WIFFI_MODULE_3:
-                    if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
-                        $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "temp", "feuchte_rel"', 0);
+                    if (!(in_array('temp', $identList) && in_array('feuchte', $identList))) {
+                        $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "temp", "feuchte"', 0);
                         $with_heatindex = false;
                         $status = IS_INVALIDCONFIG;
                     }
@@ -146,7 +146,7 @@ class Wiffi extends IPSModule
                     break;
             }
         }
-        $this->MaintainVariable('AbsolutePressure', $this->Translate('Absolute pressure'), VARIABLETYPE_FLOAT, 'Weatherman.Pressure', $vpos++, $with_absolute_pressure);
+        $this->MaintainVariable('AbsolutePressure', $this->Translate('Absolute pressure'), VARIABLETYPE_FLOAT, 'Wiffi.Pressure', $vpos++, $with_absolute_pressure);
 
         $vpos = 100;
 
@@ -307,7 +307,7 @@ class Wiffi extends IPSModule
                 $items[] = [
                     'type'    => 'CheckBox',
                     'name'    => 'with_heatindex',
-                    'caption' => ' ... Heatindex (needs "temp", "feuchte_rel")'
+                    'caption' => ' ... Heatindex (needs "temp", "feuchte")'
                 ];
 
                 $items[] = [
@@ -515,8 +515,8 @@ class Wiffi extends IPSModule
             case WIFFI_MODULE_3:
                 $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
                 if ($with_heatindex) {
-                    $temperatur = $this->GetValue('temperatur');
-                    $feuchte_rel = $this->GetValue('feuchte_rel');
+                    $temperatur = $this->GetValue('temp');
+                    $feuchte_rel = $this->GetValue('feuchte');
                     $v = $this->calcHeatindex($temperatur, $feuchte_rel);
                     $this->SetValue('Heatindex', $v);
                 }
@@ -812,5 +812,34 @@ class Wiffi extends IPSModule
         $AP = $pressure / pow((1 - $TG * $ad / $TK), (0.03416 / $TG));
 
         return $AP;
+    }
+     // Temperatur als Heatindex umrechnen
+    //   Quelle: https://de.wikipedia.org/wiki/Hitzeindex
+    private function calcHeatindex(float $temp, float $hum)
+    {
+        if ($temp < 27 || $hum < 40) {
+            return $temp;
+        }
+        $c1 = -8.784695;
+        $c2 = 1.61139411;
+        $c3 = 2.338549;
+        $c4 = -0.14611605;
+        $c5 = -1.2308094 * pow(10, -2);
+        $c6 = -1.6424828 * pow(10, -2);
+        $c7 = 2.211732 * pow(10, -3);
+        $c8 = 7.2546 * pow(10, -4);
+        $c9 = -3.582 * pow(10, -6);
+
+        $hi = $c1
+            + $c2 * $temp
+            + $c3 * $hum
+            + $c4 * $temp * $hum
+            + $c5 * pow($temp, 2)
+            + $c6 * pow($hum, 2)
+            + $c7 * pow($temp, 2) * $hum
+            + $c8 * $temp * pow($hum, 2)
+            + $c9 * pow($temp, 2) * pow($hum, 2);
+        $hi = round($hi); // ohne NK
+        return $hi;
     }
 }
