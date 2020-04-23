@@ -813,7 +813,7 @@ class Wiffi extends IPSModule
 
         return $AP;
     }
-     // Temperatur als Heatindex umrechnen
+    // Temperatur als Heatindex umrechnen
     //   Quelle: https://de.wikipedia.org/wiki/Hitzeindex
     private function calcHeatindex(float $temp, float $hum)
     {

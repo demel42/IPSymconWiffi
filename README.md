@@ -127,6 +127,10 @@ GUIDs
 
 ## 7. Versions-Historie
 
+- 1.2 @ 23.04.2020 14:08
+  - Fix: Profil Weatherman.pressure ersetzt durch Wiffi.pressure
+  - Fix: fehlende Funtion calcHeatIndex() ergänzt
+
 - 1.1 @ 08.01.2020 17:23
   - Fix in ReceiveData()
   - ungenutztes Property 'fields' entfernt
