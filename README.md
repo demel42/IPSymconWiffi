@@ -127,6 +127,9 @@ GUIDs
 
 ## 7. Versions-Historie
 
+- 1.3 @ 13.07.2020 14:56
+  - LICENSE.md hinzugefügt
+
 - 1.2 @ 23.04.2020 14:08
   - Fix: Profil Weatherman.pressure ersetzt durch Wiffi.pressure
   - Fix: fehlende Funtion calcHeatIndex() ergänzt
