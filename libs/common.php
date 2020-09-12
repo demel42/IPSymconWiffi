@@ -2,12 +2,7 @@
 
 declare(strict_types=1);
 
-if (!defined('IS_INVALIDCONFIG')) {
-    define('IS_INVALIDCONFIG', IS_EBASE + 1);
-    define('IS_MODULETYPEMISMATCH', IS_EBASE + 2);
-}
-
-trait WiffiCommon
+trait WiffiCommonLib
 {
     protected function SetValue($Ident, $Value)
     {
@@ -192,20 +187,5 @@ trait WiffiCommon
             return $bval ? 'true' : 'false';
         }
         return $bval;
-    }
-
-    private function GetFormStatus()
-    {
-        $formStatus = [];
-        $formStatus[] = ['code' => IS_CREATING, 'icon' => 'inactive', 'caption' => 'Instance getting created'];
-        $formStatus[] = ['code' => IS_ACTIVE, 'icon' => 'active', 'caption' => 'Instance is active'];
-        $formStatus[] = ['code' => IS_DELETING, 'icon' => 'inactive', 'caption' => 'Instance is deleted'];
-        $formStatus[] = ['code' => IS_INACTIVE, 'icon' => 'inactive', 'caption' => 'Instance is inactive'];
-        $formStatus[] = ['code' => IS_NOTCREATED, 'icon' => 'inactive', 'caption' => 'Instance is not created'];
-
-        $formStatus[] = ['code' => IS_INVALIDCONFIG, 'icon' => 'error', 'caption' => 'Instance is inactive (invalid configuration)'];
-        $formStatus[] = ['code' => IS_MODULETYPEMISMATCH, 'icon' => 'error', 'caption' => 'Instance is inactive (wrong wiffi-module)'];
-
-        return $formStatus;
     }
 }

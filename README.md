@@ -127,8 +127,11 @@ GUIDs
 
 ## 7. Versions-Historie
 
-- 1.3 @ 13.07.2020 14:56
+- 1.3 @ 12.09.2020 11:40 (beta)
   - LICENSE.md hinzugefügt
+  - lokale Funktionen aus common.php in locale.php verlagert
+  - Traits des Moduls haben nun Postfix "Lib"
+  - define's durch statische Klassen-Variablen ersetzt
 
 - 1.2 @ 23.04.2020 14:08
   - Fix: Profil Weatherman.pressure ersetzt durch Wiffi.pressure
