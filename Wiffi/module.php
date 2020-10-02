@@ -406,13 +406,13 @@ class Wiffi extends IPSModule
                 } else {
                     $tstamp = 0;
                 }
-                $this->SetValueInteger('LastMessage', $tstamp);
+                $this->SetValue('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
-                $this->SetValueInteger('Uptime', (int) $uptime / 1000);
+                $this->SetValue('Uptime', (int) $uptime / 1000);
 
                 $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValueInteger('WifiStrength', $rssi);
+                $this->SetValue('WifiStrength', $rssi);
 
                 $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
@@ -424,13 +424,13 @@ class Wiffi extends IPSModule
                 } else {
                     $tstamp = 0;
                 }
-                $this->SetValueInteger('LastMessage', $tstamp);
+                $this->SetValue('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.sec_seit_reset', 0);
-                $this->SetValueInteger('Uptime', $uptime);
+                $this->SetValue('Uptime', $uptime);
 
                 $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValueInteger('WifiStrength', $rssi);
+                $this->SetValue('WifiStrength', $rssi);
 
                 $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
@@ -498,7 +498,7 @@ class Wiffi extends IPSModule
 
                     switch ($vartype) {
                         case VARIABLETYPE_INTEGER:
-                            $this->SetValueInteger($ident, (int) $value);
+                            $this->SetValue($ident, (int) $value);
                             break;
                         default:
                             $this->SetValue($ident, $value);
@@ -515,26 +515,26 @@ class Wiffi extends IPSModule
             case self::$AIRSNIFFER:
                 $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
                 if ($with_heatindex) {
-                    $temperatur = $this->GetValueFloat('temp');
-                    $feuchte_rel = $this->GetValueFloat('feuchte');
-                    $v = $this->calcHeatindex($temperatur, $feuchte_rel);
-                    $this->SetValueFloat('Heatindex', $v);
+                    $temperatur = $this->GetValue('temp');
+                    $feuchte_rel = $this->GetValue('feuchte');
+                    $v = $this->calcHeatindex((float) $temperatur, (float) $feuchte_rel);
+                    $this->SetValue('Heatindex', $v);
                 }
 
                 $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
                 if ($with_absolute_pressure) {
-                    $baro = $this->GetValueFloat('baro');
-                    $temp = $this->GetValueFloat('temp');
+                    $baro = $this->GetValue('baro');
+                    $temp = $this->GetValue('temp');
                     $altitude = $this->ReadPropertyInteger('altitude');
-                    $v = $this->calcAbsolutePressure($baro, $temp, $altitude);
-                    $this->SetValueFloat('AbsolutePressure', $v);
+                    $v = $this->calcAbsolutePressure((float) $baro, (float) $temp, $altitude);
+                    $this->SetValue('AbsolutePressure', $v);
                 }
                 break;
             default:
                 break;
         }
 
-        $this->SetValueInteger('LastUpdate', time());
+        $this->SetValue('LastUpdate', time());
     }
 
     private function getFieldMap(int $module_type)
