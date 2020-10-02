@@ -342,7 +342,7 @@ class Wiffi extends IPSModule
                 $ndata = '';
                 break;
             case 2: /* Disconnected */
-                $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => disonnected', 0);
+                $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => disconnected', 0);
                 $rdata = $this->GetMultiBuffer('Data');
                 if ($rdata != '') {
                     $rdata = str_replace(',]', ']', $rdata); //Workaround für einen Syntaxfehler beim AirSniffer, Firmware 10
@@ -852,12 +852,12 @@ class Wiffi extends IPSModule
                 'prof'   => 'Wiffi.CO2_Equ',
             ],
             [
-                'ident'  => 'iaq_max_note',
+                'ident'  => 'IAQ_max_note',
                 'desc'   => 'Airquality Max.Note',
                 'type'   => VARIABLETYPE_STRING,
             ],
             [
-                'ident'  => 'iaq_rr0_value',
+                'ident'  => 'rr0_value',
                 'desc'   => 'Airquality (R/R0)',
                 'type'   => VARIABLETYPE_FLOAT,
                 'prof'   => 'Wiffi.RR0',
