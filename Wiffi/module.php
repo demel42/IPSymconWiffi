@@ -17,7 +17,7 @@ class Wiffi extends IPSModule
         $this->RegisterPropertyInteger('module_type', self::$WIFFI_MODULE_NONE);
         $this->RegisterPropertyString('use_fields', '[]');
 
-        $this->RegisterPropertyInteger('altitude', false);
+        $this->RegisterPropertyInteger('altitude', 0);
         $this->RegisterPropertyBoolean('with_absolute_pressure', false);
         $this->RegisterPropertyBoolean('with_heatindex', false);
 
@@ -62,6 +62,12 @@ class Wiffi extends IPSModule
         $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
         $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
         $this->CreateVarProfile('Wiffi.VOC', VARIABLETYPE_FLOAT, '', 0, 0, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.pm10', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.pm2_5', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.pm1_0', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.CO2_IAQ', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Gauge');
+        $this->CreateVarProfile('Wiffi.CO2_Equ', VARIABLETYPE_FLOAT, ' ppm', 0, 5000, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.RR0', VARIABLETYPE_FLOAT, '', 0, 1, 0, 2, 'Gauge');
 
         $this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
     }
@@ -108,6 +114,7 @@ class Wiffi extends IPSModule
             switch ($module_type) {
                 case self::$WIFFI_MODULE_WZ:
                 case self::$WIFFI_MODULE_3:
+                case self::$AIRSNIFFER:
                     if (!(in_array('temp', $identList) && in_array('feuchte', $identList))) {
                         $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "temp", "feuchte"', 0);
                         $with_heatindex = false;
@@ -127,6 +134,7 @@ class Wiffi extends IPSModule
             switch ($module_type) {
                 case self::$WIFFI_MODULE_WZ:
                 case self::$WIFFI_MODULE_3:
+                case self::$AIRSNIFFER:
                     if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
                         $altitude = $this->ReadPropertyInteger('altitude');
                         if (!(in_array('baro', $identList) && in_array('temp', $identList) && $altitude > 0)) {
@@ -215,6 +223,7 @@ class Wiffi extends IPSModule
         $opts_module_type[] = ['caption' => $this->Translate('none'), 'value' => self::$WIFFI_MODULE_NONE];
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi-WZ'), 'value' => self::$WIFFI_MODULE_WZ];
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi 3'), 'value' => self::$WIFFI_MODULE_3];
+        $opts_module_type[] = ['caption' => $this->Translate('AirSniffer'), 'value' => self::$AIRSNIFFER];
 
         $formElements[] = [
             'type'     => 'Select',
@@ -284,6 +293,7 @@ class Wiffi extends IPSModule
         switch ($module_type) {
             case self::$WIFFI_MODULE_WZ:
             case self::$WIFFI_MODULE_3:
+            case self::$AIRSNIFFER:
                 $items[] = [
                     'type'    => 'CheckBox',
                     'name'    => 'with_heatindex',
@@ -335,6 +345,7 @@ class Wiffi extends IPSModule
                 $this->SendDebug(__FUNCTION__, $jmsg['ClientIP'] . ':' . $jmsg['ClientPort'] . ' => disonnected', 0);
                 $rdata = $this->GetMultiBuffer('Data');
                 if ($rdata != '') {
+                    $rdata = str_replace(',]', ']', $rdata); //Workaround für einen Syntaxfehler beim AirSniffer, Firmware 10
                     $jdata = json_decode($rdata, true);
                     if ($jdata == '') {
                         $this->SendDebug(__FUNCTION__, 'json_error=' . json_last_error_msg() . ', data=' . $rdata, 0);
@@ -373,6 +384,13 @@ class Wiffi extends IPSModule
                     return;
                 }
                 break;
+            case self::$AIRSNIFFER:
+                if ($modultyp != 'airsniffer') {
+                    $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
+                    $this->SetStatus(self::$IS_MODULETYPEMISMATCH);
+                    return;
+                }
+                break;
             default:
                 return;
         }
@@ -388,30 +406,31 @@ class Wiffi extends IPSModule
                 } else {
                     $tstamp = 0;
                 }
-                $this->SetValue('LastMessage', $tstamp);
+                $this->SetValueInteger('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
-                $this->SetValue('Uptime', $uptime / 1000);
+                $this->SetValueInteger('Uptime', (int) $uptime / 1000);
 
                 $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValue('WifiStrength', $rssi);
+                $this->SetValueInteger('WifiStrength', $rssi);
 
                 $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
             case self::$WIFFI_MODULE_3:
+            case self::$AIRSNIFFER:
                 $s = $this->GetArrayElem($jdata, 'Systeminfo.zeitpunkt', '');
                 if (preg_match('#^([0-9]+)\.([0-9]+)\.([0-9]+)[ ]*/([0-9]+)h([0-9]+)$#', $s, $r)) {
                     $tstamp = strtotime($r[1] . '-' . $r[2] . '-' . $r[3] . ' ' . $r[4] . ':' . $r[5] . ':00');
                 } else {
                     $tstamp = 0;
                 }
-                $this->SetValue('LastMessage', $tstamp);
+                $this->SetValueInteger('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.sec_seit_reset', 0);
-                $this->SetValue('Uptime', $uptime);
+                $this->SetValueInteger('Uptime', $uptime);
 
                 $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValue('WifiStrength', $rssi);
+                $this->SetValueInteger('WifiStrength', $rssi);
 
                 $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
@@ -479,7 +498,7 @@ class Wiffi extends IPSModule
 
                     switch ($vartype) {
                         case VARIABLETYPE_INTEGER:
-                            $this->SetValue($ident, intval($value));
+                            $this->SetValueInteger($ident, (int) $value);
                             break;
                         default:
                             $this->SetValue($ident, $value);
@@ -493,28 +512,29 @@ class Wiffi extends IPSModule
         switch ($module_type) {
             case self::$WIFFI_MODULE_WZ:
             case self::$WIFFI_MODULE_3:
+            case self::$AIRSNIFFER:
                 $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
                 if ($with_heatindex) {
-                    $temperatur = $this->GetValue('temp');
-                    $feuchte_rel = $this->GetValue('feuchte');
+                    $temperatur = $this->GetValueFloat('temp');
+                    $feuchte_rel = $this->GetValueFloat('feuchte');
                     $v = $this->calcHeatindex($temperatur, $feuchte_rel);
-                    $this->SetValue('Heatindex', $v);
+                    $this->SetValueFloat('Heatindex', $v);
                 }
 
                 $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
                 if ($with_absolute_pressure) {
-                    $baro = $this->GetValue('baro');
-                    $temp = $this->GetValue('temp');
+                    $baro = $this->GetValueFloat('baro');
+                    $temp = $this->GetValueFloat('temp');
                     $altitude = $this->ReadPropertyInteger('altitude');
                     $v = $this->calcAbsolutePressure($baro, $temp, $altitude);
-                    $this->SetValue('AbsolutePressure', $v);
+                    $this->SetValueFloat('AbsolutePressure', $v);
                 }
                 break;
             default:
                 break;
         }
 
-        $this->SetValue('LastUpdate', time());
+        $this->SetValueInteger('LastUpdate', time());
     }
 
     private function getFieldMap(int $module_type)
@@ -621,6 +641,7 @@ class Wiffi extends IPSModule
                 'prof'   => '~Alert',
             ],
         ];
+
         $map_3 = [
             [
                 'ident'  => 'ip',
@@ -759,12 +780,99 @@ class Wiffi extends IPSModule
             ],
         ];
 
+        $map_airsniffer = [
+            [
+                'ident'  => 'ip',
+                'desc'   => 'IP-address',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'temp',
+                'desc'   => 'Temperature',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Temperatur',
+            ],
+            [
+                'ident'  => 'feuchte',
+                'desc'   => 'Humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Humidity',
+            ],
+            [
+                'ident'  => 'taupunkt',
+                'desc'   => 'Dewpoint',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Dewpoint',
+            ],
+            [
+                'ident'  => 'feuchte_abs',
+                'desc'   => 'Absolute humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.absHumidity',
+            ],
+            [
+                'ident'  => 'baro',
+                'desc'   => 'Air pressure',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Pressure',
+            ],
+            [
+                'ident'  => 'luftdrucktrend',
+                'desc'   => 'Trend of air pressure',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'pm10',
+                'desc'   => 'Particles 10',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.pm10',
+            ],
+            [
+                'ident'  => 'pm2_5',
+                'desc'   => 'Particles 2.5',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.pm2_5',
+            ],
+            [
+                'ident'  => 'pm1_0',
+                'desc'   => 'Particles 1.0',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.pm1_0',
+            ],
+            [
+                'ident'  => 'iaq_co2',
+                'desc'   => 'Airquality (CO2-IAQ)',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.CO2_IAQ',
+            ],
+            [
+                'ident'  => 'co2_equ',
+                'desc'   => 'Airquality (CO2-Equ.)',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.CO2_Equ',
+            ],
+            [
+                'ident'  => 'iaq_max_note',
+                'desc'   => 'Airquality Max.Note',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'iaq_rr0_value',
+                'desc'   => 'Airquality (R/R0)',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.RR0',
+            ],
+        ];
+
         switch ($module_type) {
             case self::$WIFFI_MODULE_WZ:
                 $map = $map_wz;
                 break;
             case self::$WIFFI_MODULE_3:
                 $map = $map_3;
+                break;
+            case self::$AIRSNIFFER:
+                $map = $map_airsniffer;
                 break;
             default:
                 $map = [];
@@ -774,7 +882,7 @@ class Wiffi extends IPSModule
 
     // Luftdruck (Meereshöhe) in absoluten (lokaler) Luftdruck umrechnen
     //   Quelle: https://rechneronline.de/barometer/hoehe.php
-    private function calcAbsolutePressure(float $pressure, float $temp, int $altitude)
+    private function calcAbsolutePressure(float $pressure, float $temp, int $altitude):float
     {
         // Temperaturgradient (geschätzt)
         $TG = 0.0065;
