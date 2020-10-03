@@ -62,10 +62,7 @@ class Wiffi extends IPSModule
         $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
         $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
         $this->CreateVarProfile('Wiffi.VOC', VARIABLETYPE_FLOAT, '', 0, 0, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.pm10', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.pm2_5', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.pm1_0', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.CO2_IAQ', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Gauge');
+        $this->CreateVarProfile('Wiffi.Particles', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
         $this->CreateVarProfile('Wiffi.CO2_Equ', VARIABLETYPE_FLOAT, ' ppm', 0, 5000, 0, 2, 'Gauge');
         $this->CreateVarProfile('Wiffi.RR0', VARIABLETYPE_FLOAT, '', 0, 1, 0, 2, 'Gauge');
 
@@ -276,7 +273,8 @@ class Wiffi extends IPSModule
             'values'   => $values
         ];
 
-        $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Variables'];
+        //expanded = true ist ein Workaround. Siehe https://www.symcon.de/forum/threads/42842-Fehler-bei-onChange-in-Verbindung-mit-ExpansionPanel?p=437371#post437371
+        $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Variables', 'expanded' => true];
 
         $items = [];
         $items[] = [
@@ -780,6 +778,9 @@ class Wiffi extends IPSModule
             ],
         ];
 
+        //die Liste entspricht den zur Verfügung gestellten Daten von http://<IP>/?json:
+        // das Ergebnis lässt sich gut mit https://jsonlint.com/ formatieren
+
         $map_airsniffer = [
             [
                 'ident'  => 'ip',
@@ -825,25 +826,43 @@ class Wiffi extends IPSModule
                 'ident'  => 'pm10',
                 'desc'   => 'Particles 10',
                 'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.pm10',
+                'prof'   => 'Wiffi.Particles',
             ],
             [
                 'ident'  => 'pm2_5',
                 'desc'   => 'Particles 2.5',
                 'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.pm2_5',
+                'prof'   => 'Wiffi.Particles',
             ],
             [
                 'ident'  => 'pm1_0',
                 'desc'   => 'Particles 1.0',
                 'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.pm1_0',
+                'prof'   => 'Wiffi.Particles',
+            ],
+            [
+                'ident'  => 'iaq10',
+                'desc'   => 'IAQ Particles 10',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.IAQ',
+            ],
+            [
+                'ident'  => 'iaq2_5',
+                'desc'   => 'IAQ Particles 2.5',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.IAQ',
+            ],
+            [
+                'ident'  => 'iaq1_0',
+                'desc'   => 'IAQ Particles 1.0',
+                'type'   => VARIABLETYPE_INTEGER,
+                'prof'   => 'Wiffi.IAQ',
             ],
             [
                 'ident'  => 'iaq_co2',
                 'desc'   => 'Airquality (CO2-IAQ)',
                 'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.CO2_IAQ',
+                'prof'   => 'Wiffi.IAQ',
             ],
             [
                 'ident'  => 'co2_equ',

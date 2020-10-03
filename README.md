@@ -23,7 +23,7 @@
 Unterstützt werden zur Zeit die folgenden Module (in Klammern die Firmware, mit der getestet wurde) 
 - [WIFFI-WZ 2.0](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor) (FW 106)
 - [WIFFI-3](https://www.stall.biz/project/der-wiffi-3-0-die-raumsonde-nicht-nur-fuer-das-wohnzimmer) (FW 20?)
-- [AirSniffer](https://www.stall.biz/project/der-airsniffer-schlechte-luft-kann-man-messen) (FW 10)
+- [AirSniffer](https://www.stall.biz/project/der-airsniffer-schlechte-luft-kann-man-messen) (FW 11)
 
 ## 2. Voraussetzungen
 
@@ -113,11 +113,11 @@ Es werden folgende Variablenprofile angelegt:
 Wiffi.MotionnDetector, Wiffi.NoiseDetector
 
 * Integer<br>
-Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi, Wiffi.CO2_IAQ
+Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi
 
 * Float<br>
 Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur,
-Wiffi.VOC, Wiffi.pm1_0, Wiffi.pm2_5, Wiffi.pm10, Wiffi.CO2_Equ, Wiffi.RR0
+Wiffi.VOC, Wiffi.Particles, Wiffi.CO2_Equ, Wiffi.RR0
 
 * String<br>
 
@@ -129,7 +129,7 @@ GUIDs
   - Wiffi: `{92D39B81-9163-BBCC-734D-52EBBE78178B}`
 
 ## 7. Versions-Historie
-- 1.4 @ 02.10.2020 17:59
+- 1.4 @ 03.10.2020 09:59
   - Unterstützung des Sensormoduls "AirSniffer"
 
 - 1.3 @ 12.09.2020 11:40
