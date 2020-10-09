@@ -63,7 +63,7 @@
 			"IAQ Particles 2.5": "IAQ Feinstaub PM2.5",
 			"IAQ Particles 10": "IAQ Feinstaub PM10",
 			"Airquality (CO2-Equ.)": "Schadgase CO2-Equ.",
-			"Airquality (CO2-IAQ)": "Schadgase IAQ-CO2",
+			"Airquality (CO2-IAQ)": "IAQ Schadgase CO2",
 			"Airquality Max.Note": "Luftqualität IAQ ges. Note",
 			"On": "Ein",
 			"Off": "Aus",

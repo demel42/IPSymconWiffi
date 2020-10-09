@@ -113,11 +113,11 @@ Es werden folgende Variablenprofile angelegt:
 Wiffi.MotionnDetector, Wiffi.NoiseDetector
 
 * Integer<br>
-Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi
+Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi, Wiffi.CO2_Equ
 
 * Float<br>
 Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur,
-Wiffi.VOC, Wiffi.Particles, Wiffi.CO2_Equ, Wiffi.RR0
+Wiffi.VOC, Wiffi.Particles, Wiffi.RR0
 
 * String<br>
 

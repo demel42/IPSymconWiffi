@@ -63,7 +63,7 @@ class Wiffi extends IPSModule
         $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
         $this->CreateVarProfile('Wiffi.VOC', VARIABLETYPE_FLOAT, '', 0, 0, 0, 2, 'Gauge');
         $this->CreateVarProfile('Wiffi.Particles', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.CO2_Equ', VARIABLETYPE_FLOAT, ' ppm', 0, 5000, 0, 2, 'Gauge');
+        $this->CreateVarProfile('Wiffi.CO2_Equ', VARIABLETYPE_INTEGER, ' ppm', 0, 5000, 0, 0, 'Gauge');
         $this->CreateVarProfile('Wiffi.RR0', VARIABLETYPE_FLOAT, '', 0, 1, 0, 2, 'Gauge');
 
         $this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
@@ -867,7 +867,7 @@ class Wiffi extends IPSModule
             [
                 'ident'  => 'co2_equ',
                 'desc'   => 'Airquality (CO2-Equ.)',
-                'type'   => VARIABLETYPE_FLOAT,
+                'type'   => VARIABLETYPE_INTEGER,
                 'prof'   => 'Wiffi.CO2_Equ',
             ],
             [
