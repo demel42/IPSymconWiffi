@@ -56,7 +56,7 @@ class Wiffi extends IPSModule
 
         $this->CreateVarProfile('Wiffi.Temperatur', VARIABLETYPE_FLOAT, ' °C', -10, 30, 0, 1, 'Temperature');
         $this->CreateVarProfile('Wiffi.Humidity', VARIABLETYPE_FLOAT, ' %', 0, 0, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 0, 'Drops');
+        $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 1, 'Drops');
         $this->CreateVarProfile('Wiffi.Pressure', VARIABLETYPE_FLOAT, ' mbar', 0, 0, 0, 0, 'Gauge');
         $this->CreateVarProfile('Wiffi.Heatindex', VARIABLETYPE_FLOAT, ' °C', 0, 100, 0, 0, 'Temperature');
         $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
