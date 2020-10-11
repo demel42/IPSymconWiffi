@@ -56,7 +56,15 @@
 			"Switch": "Schalter",
 			"Temperature": "Temperatur",
 			"Trend of air pressure": "Trend des Luftdrucks",
-
+			"Particles 1.0": "Feinstaub PM1.0",
+			"Particles 2.5": "Feinstaub PM2.5",
+			"Particles 10": "Feinstaub PM10",
+			"IAQ Particles 1.0": "IAQ Feinstaub PM1.0",
+			"IAQ Particles 2.5": "IAQ Feinstaub PM2.5",
+			"IAQ Particles 10": "IAQ Feinstaub PM10",
+			"Airquality (CO2-Equ.)": "Schadgase CO2-Equ.",
+			"Airquality (CO2-IAQ)": "IAQ Schadgase CO2",
+			"Airquality Max.Note": "Luftqualität IAQ ges. Note",
 			"On": "Ein",
 			"Off": "Aus",
 

@@ -18,14 +18,17 @@
 
 ## 1. Funktionsumfang
 
-Übernahme der Daten von dem "do it yourself" _Wifi-Sensor_ von ([stall.biz](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor)).
+Übernahme der Daten von verschiedenen "do it yourself" _Sensormodulen_ von ([stall.biz](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor)).
 
-Getestet mit Wiffi-WZ mit der Version **106** und Wiffi 3.0 mit der Version **20**?
+Unterstützt werden zur Zeit die folgenden Module (in Klammern die Firmware, mit der getestet wurde) 
+- [WIFFI-WZ 2.0](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor) (FW 106)
+- [WIFFI-3](https://www.stall.biz/project/der-wiffi-3-0-die-raumsonde-nicht-nur-fuer-das-wohnzimmer) (FW 20?)
+- [AirSniffer](https://www.stall.biz/project/der-airsniffer-schlechte-luft-kann-man-messen) (FW 11)
 
 ## 2. Voraussetzungen
 
  - IP-Symcon ab Version 5.3
- - ein _Wiffi-Wohnzimmersensor_ oder _Wiffi 3.0_, weitere Wiffi-Module können bei Bedarf und Unterstützung implementiert werden
+ - eines der genannten Sensor Module, weitere können bei Bedarf und Unterstützung implementiert werden
 
 ## 3. Installation
 
@@ -33,13 +36,13 @@ Getestet mit Wiffi-WZ mit der Version **106** und Wiffi 3.0 mit der Version **20
 
 Die Webconsole von IP-Symcon mit _http://\<IP-Symcon IP\>:3777/console/_ öffnen.
 
-Anschließend oben rechts auf das Symbol für den Modulstore (IP-Symcon > 5.1) klicken
+Anschließend oben rechts auf das Symbol für den Modulstore klicken
 
 ![Store](docs/de/img/store_icon.png?raw=true "open store")
 
 Im Suchfeld nun _Wiffi-WZ_ eingeben, das Modul auswählen und auf _Installieren_ drücken.
 
-#### Alternatives Installieren über Modules Instanz (IP-Symcon < 5.1)
+#### Alternatives Installieren über Modules Instanz
 
 Die Webconsole von IP-Symcon mit _http://\<IP-Symcon IP\>:3777/console/_ aufrufen.
 
@@ -95,7 +98,7 @@ damit schickt Wiffi minütlich die Daten sowie bei bestimmten Zuständen (Regen 
 
 | Eigenschaft                           | Typ      | Standardwert | Beschreibung |
 | :------------------------------------ | :------  | :----------- | :----------- |
-| Modultyp                              | integer  |              | 1=Wiffi-WZ, 2=Wiffi 3 |
+| Modultyp                              | integer  |              | 1=Wiffi-WZ, 2=Wiffi 3, 3=AirSniffer |
 |                                       |          |              | |
 | Höhe des Modules über NN              | integer  | 0            | |
 |                                       |          |              | |
@@ -110,11 +113,11 @@ Es werden folgende Variablenprofile angelegt:
 Wiffi.MotionnDetector, Wiffi.NoiseDetector
 
 * Integer<br>
-Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi,
+Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi, Wiffi.CO2_Equ
 
 * Float<br>
 Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur,
-Wiffi.VOC,
+Wiffi.VOC, Wiffi.Particles, Wiffi.RR0
 
 * String<br>
 
@@ -126,6 +129,8 @@ GUIDs
   - Wiffi: `{92D39B81-9163-BBCC-734D-52EBBE78178B}`
 
 ## 7. Versions-Historie
+- 1.4 @ 03.10.2020 09:59
+  - Unterstützung des Sensormoduls "AirSniffer"
 
 - 1.3 @ 12.09.2020 11:40
   - LICENSE.md hinzugefügt
