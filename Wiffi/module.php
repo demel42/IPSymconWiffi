@@ -901,7 +901,7 @@ class Wiffi extends IPSModule
 
     // Luftdruck (Meereshöhe) in absoluten (lokaler) Luftdruck umrechnen
     //   Quelle: https://rechneronline.de/barometer/hoehe.php
-    private function calcAbsolutePressure(float $pressure, float $temp, int $altitude):float
+    private function calcAbsolutePressure(float $pressure, float $temp, int $altitude): float
     {
         // Temperaturgradient (geschätzt)
         $TG = 0.0065;
