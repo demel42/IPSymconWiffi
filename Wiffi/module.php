@@ -459,17 +459,22 @@ class Wiffi extends IPSModule
             if (preg_match('#^[^_]+_(.+)$#', $ident, $r)) {
                 $ident = $r[1];
             }
-            $value = $this->GetArrayElem($var, 'value', '');
+            if (!isset($var['value'])) {
+                continue;
+            }
+            $value = $var['value'];
 
             $found = false;
 
             $vartype = VARIABLETYPE_STRING;
             $varprof = '';
+            $ignore = false;
             foreach ($fieldMap as $map) {
                 if ($ident == $this->GetArrayElem($map, 'ident', '')) {
                     $found = true;
                     $vartype = $this->GetArrayElem($map, 'type', '');
                     $varprof = $this->GetArrayElem($map, 'prof', '');
+                    $ignore = $this->GetArrayElem($map, 'ignore', false);
                     break;
                 }
             }
@@ -488,7 +493,30 @@ class Wiffi extends IPSModule
                         continue;
                     }
 
-                    $this->SendDebug(__FUNCTION__, 'use ident "' . $ident . '", value=' . $value, 0);
+                    $ign = false;
+                    if ($value == 'bitte_warten') {
+                        $ign = true;
+                    }
+                    switch ($vartype) {
+                        case VARIABLETYPE_INTEGER:
+                            if ($ignore != false && (int) $value == (int) $ignore) {
+                                $ign = true;
+                            }
+                            break;
+                        case VARIABLETYPE_FLOAT:
+                            if ($ignore != false && (float) $value == (float) $ignore) {
+                                $ign = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    $this->SendDebug(__FUNCTION__, 'use ident "' . $ident . '", value=' . $value . ($ign ? ' (ignore)' : ''), 0);
+
+                    if ($ign) {
+                        break;
+                    }
 
                     if (in_array($ident, ['luftdrucktrend', 'iaq'])) {
                         $value = str_replace('_', ' ', $value);
@@ -497,6 +525,9 @@ class Wiffi extends IPSModule
                     switch ($vartype) {
                         case VARIABLETYPE_INTEGER:
                             $this->SetValue($ident, (int) $value);
+                            break;
+                        case VARIABLETYPE_FLOAT:
+                            $this->SetValue($ident, (float) $value);
                             break;
                         default:
                             $this->SetValue($ident, $value);
@@ -818,68 +849,78 @@ class Wiffi extends IPSModule
                 'prof'   => 'Wiffi.Pressure',
             ],
             [
-                'ident'  => 'luftdrucktrend',
-                'desc'   => 'Trend of air pressure',
-                'type'   => VARIABLETYPE_STRING,
+                'ident'   => 'luftdrucktrend',
+                'desc'    => 'Trend of air pressure',
+                'type'    => VARIABLETYPE_STRING,
             ],
             [
-                'ident'  => 'pm10',
-                'desc'   => 'Particles 10',
-                'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.Particles',
+                'ident'   => 'pm10',
+                'desc'    => 'Particles 10',
+                'type'    => VARIABLETYPE_FLOAT,
+                'prof'    => 'Wiffi.Particles',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'pm2_5',
-                'desc'   => 'Particles 2.5',
-                'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.Particles',
+                'ident'   => 'pm2_5',
+                'desc'    => 'Particles 2.5',
+                'type'    => VARIABLETYPE_FLOAT,
+                'prof'    => 'Wiffi.Particles',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'pm1_0',
-                'desc'   => 'Particles 1.0',
-                'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.Particles',
+                'ident'   => 'pm1_0',
+                'desc'    => 'Particles 1.0',
+                'type'    => VARIABLETYPE_FLOAT,
+                'prof'    => 'Wiffi.Particles',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'iaq10',
-                'desc'   => 'IAQ Particles 10',
-                'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.IAQ',
+                'ident'   => 'iaq10',
+                'desc'    => 'IAQ Particles 10',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'iaq2_5',
-                'desc'   => 'IAQ Particles 2.5',
-                'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.IAQ',
+                'ident'   => 'iaq2_5',
+                'desc'    => 'IAQ Particles 2.5',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'iaq1_0',
-                'desc'   => 'IAQ Particles 1.0',
-                'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.IAQ',
+                'ident'   => 'iaq1_0',
+                'desc'    => 'IAQ Particles 1.0',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'iaq_co2',
-                'desc'   => 'Airquality (CO2-IAQ)',
-                'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.IAQ',
+                'ident'   => 'iaq_co2',
+                'desc'    => 'Airquality (CO2-IAQ)',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'co2_equ',
-                'desc'   => 'Airquality (CO2-Equ.)',
-                'type'   => VARIABLETYPE_INTEGER,
-                'prof'   => 'Wiffi.CO2_Equ',
+                'ident'   => 'co2_equ',
+                'desc'    => 'Airquality (CO2-Equ.)',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.CO2_Equ',
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'IAQ_max_note',
-                'desc'   => 'Airquality Max.Note',
-                'type'   => VARIABLETYPE_STRING,
+                'ident'   => 'IAQ_max_note',
+                'desc'    => 'Airquality Max.Note',
+                'type'    => VARIABLETYPE_STRING,
+                'ignore'  => 0,
             ],
             [
-                'ident'  => 'rr0_value',
-                'desc'   => 'Airquality (R/R0)',
-                'type'   => VARIABLETYPE_FLOAT,
-                'prof'   => 'Wiffi.RR0',
+                'ident'   => 'rr0_value',
+                'desc'    => 'Airquality (R/R0)',
+                'type'    => VARIABLETYPE_FLOAT,
+                'prof'    => 'Wiffi.RR0',
+                'ignore'  => 0,
             ],
         ];
 
