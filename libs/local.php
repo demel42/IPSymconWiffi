@@ -11,6 +11,7 @@ trait WiffiLocalLib
     public static $WIFFI_MODULE_WZ = 1;
     public static $WIFFI_MODULE_3 = 2;
     public static $AIRSNIFFER = 3;
+    public static $AIRSNIFFER_MINI = 4;
 
     private function GetFormStatus()
     {
