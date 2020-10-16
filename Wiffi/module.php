@@ -132,6 +132,7 @@ class Wiffi extends IPSModule
                 case self::$WIFFI_MODULE_WZ:
                 case self::$WIFFI_MODULE_3:
                 case self::$AIRSNIFFER:
+                case self::$AIRSNIFFER_MINI:
                     if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
                         $altitude = $this->ReadPropertyInteger('altitude');
                         if (!(in_array('baro', $identList) && in_array('temp', $identList) && $altitude > 0)) {
@@ -221,6 +222,7 @@ class Wiffi extends IPSModule
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi-WZ'), 'value' => self::$WIFFI_MODULE_WZ];
         $opts_module_type[] = ['caption' => $this->Translate('Wiffi 3'), 'value' => self::$WIFFI_MODULE_3];
         $opts_module_type[] = ['caption' => $this->Translate('AirSniffer'), 'value' => self::$AIRSNIFFER];
+        $opts_module_type[] = ['caption' => $this->Translate('AirSniffer-mini'), 'value' => self::$AIRSNIFFER_MINI];
 
         $formElements[] = [
             'type'     => 'Select',
@@ -292,6 +294,7 @@ class Wiffi extends IPSModule
             case self::$WIFFI_MODULE_WZ:
             case self::$WIFFI_MODULE_3:
             case self::$AIRSNIFFER:
+            case self::$AIRSNIFFER_MINI:
                 $items[] = [
                     'type'    => 'CheckBox',
                     'name'    => 'with_heatindex',
@@ -383,6 +386,7 @@ class Wiffi extends IPSModule
                 }
                 break;
             case self::$AIRSNIFFER:
+            case self::$AIRSNIFFER_MINI:
                 if ($modultyp != 'airsniffer') {
                     $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
                     $this->SetStatus(self::$IS_MODULETYPEMISMATCH);
@@ -393,6 +397,8 @@ class Wiffi extends IPSModule
                 return;
         }
 
+        // get system info
+
         $systeminfo = $this->GetArrayElem($jdata, 'Systeminfo', '');
         $this->SendDebug(__FUNCTION__, 'Systeminfo=' . print_r($systeminfo, true), 0);
 
@@ -401,38 +407,62 @@ class Wiffi extends IPSModule
                 $s = $this->GetArrayElem($jdata, 'Systeminfo.wiffizeit', '');
                 if (preg_match('#^[ ]*([0-9]+)[ ]+([0-9]+):([0-9]+)$#', $s, $r)) {
                     $tstamp = strtotime($r[2] . ':' . $r[3] . ':00');
+                    $tstamp_ign = false;
                 } else {
                     $tstamp = 0;
+                    $tstamp_ign = true;
                 }
-                $this->SetValue('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.millis_seit_reset', 0);
                 $this->SetValue('Uptime', (int) $uptime / 1000);
 
-                $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValue('WifiStrength', $rssi);
-
-                $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
             case self::$WIFFI_MODULE_3:
             case self::$AIRSNIFFER:
+            case self::$AIRSNIFFER_MINI:
                 $s = $this->GetArrayElem($jdata, 'Systeminfo.zeitpunkt', '');
                 if (preg_match('#^([0-9]+)\.([0-9]+)\.([0-9]+)[ ]*/([0-9]+)h([0-9]+)$#', $s, $r)) {
                     $tstamp = strtotime($r[1] . '-' . $r[2] . '-' . $r[3] . ' ' . $r[4] . ':' . $r[5] . ':00');
+                    $tstamp_ign = false;
                 } else {
                     $tstamp = 0;
+                    $tstamp_ign = true;
                 }
-                $this->SetValue('LastMessage', $tstamp);
 
                 $uptime = $this->GetArrayElem($jdata, 'Systeminfo.sec_seit_reset', 0);
                 $this->SetValue('Uptime', $uptime);
 
-                $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', '');
-                $this->SetValue('WifiStrength', $rssi);
-
-                $this->SendDebug(__FUNCTION__, 'modultyp=' . $modultyp . ', tstamp=' . date('d.m.Y H:i:s', $tstamp) . ', rssi=' . $rssi . ', uptime=' . $uptime . 's', 0);
                 break;
         }
+
+        if ($tstamp_ign === false){
+            $this->SetValue('LastMessage', $tstamp);
+        }
+
+        $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', 0);
+        if ($rssi !== 0){
+            var_dump ($rssi);
+            $this->SetValue('WifiStrength', $rssi);
+            $rssi_ign = false;
+        } else {
+            $rssi_ign = true;
+        }
+
+        $this->SendDebug(
+            __FUNCTION__,
+            sprintf(
+                'modultyp=%s, tstamp=%s%s, rssi=%s%s, uptime=%ss',
+                $modultyp,
+                date('d.m.Y H:i:s', $tstamp),
+                ($tstamp_ign ? ' (ignore)' : ''),
+                $rssi,
+                ($rssi_ign ? ' (ignore)' : ''),
+                $uptime
+            ),
+            0
+        );
+
+        // get sensor info
 
         $fieldMap = $this->getFieldMap($module_type);
         $this->SendDebug(__FUNCTION__, 'fieldMap="' . print_r($fieldMap, true) . '"', 0);
@@ -467,13 +497,11 @@ class Wiffi extends IPSModule
             $found = false;
 
             $vartype = VARIABLETYPE_STRING;
-            $varprof = '';
             $ignore = false;
             foreach ($fieldMap as $map) {
                 if ($ident == $this->GetArrayElem($map, 'ident', '')) {
                     $found = true;
                     $vartype = $this->GetArrayElem($map, 'type', '');
-                    $varprof = $this->GetArrayElem($map, 'prof', '');
                     $ignore = $this->GetArrayElem($map, 'ignore', false);
                     break;
                 }
@@ -499,12 +527,12 @@ class Wiffi extends IPSModule
                     }
                     switch ($vartype) {
                         case VARIABLETYPE_INTEGER:
-                            if ($ignore != false && (int) $value == (int) $ignore) {
+                            if ($ignore !== false && (int) $value == (int) $ignore) {
                                 $ign = true;
                             }
                             break;
                         case VARIABLETYPE_FLOAT:
-                            if ($ignore != false && (float) $value == (float) $ignore) {
+                            if ($ignore !== false && (float) $value == (float) $ignore) {
                                 $ign = true;
                             }
                             break;
@@ -512,7 +540,7 @@ class Wiffi extends IPSModule
                             break;
                     }
 
-                    $this->SendDebug(__FUNCTION__, 'use ident "' . $ident . '", value=' . $value . ($ign ? ' (ignore)' : ''), 0);
+                    $this->SendDebug(__FUNCTION__, sprintf('use ident "%s", value=%s%s', $ident, $value, ($ign ? ' (ignore)' : '')), 0);
 
                     if ($ign) {
                         break;
@@ -858,14 +886,14 @@ class Wiffi extends IPSModule
                 'desc'    => 'Particles 10',
                 'type'    => VARIABLETYPE_FLOAT,
                 'prof'    => 'Wiffi.Particles',
-                'ignore'  => 0,
+                'ignore'  => 0.0,
             ],
             [
                 'ident'   => 'pm2_5',
                 'desc'    => 'Particles 2.5',
                 'type'    => VARIABLETYPE_FLOAT,
                 'prof'    => 'Wiffi.Particles',
-                'ignore'  => 0,
+                'ignore'  => 0.0,
             ],
             [
                 'ident'   => 'pm1_0',
@@ -913,14 +941,82 @@ class Wiffi extends IPSModule
                 'ident'   => 'IAQ_max_note',
                 'desc'    => 'Airquality Max.Note',
                 'type'    => VARIABLETYPE_STRING,
-                'ignore'  => 0,
             ],
             [
                 'ident'   => 'rr0_value',
                 'desc'    => 'Airquality (R/R0)',
                 'type'    => VARIABLETYPE_FLOAT,
                 'prof'    => 'Wiffi.RR0',
+                'ignore'  => 0.0,
+            ],
+        ];
+
+        $map_airsniffer_mini = [
+            [
+                'ident'  => 'ip',
+                'desc'   => 'IP-address',
+                'type'   => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'  => 'temp',
+                'desc'   => 'Temperature',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Temperatur',
+            ],
+            [
+                'ident'  => 'feuchte',
+                'desc'   => 'Humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Humidity',
+            ],
+            [
+                'ident'  => 'taupunkt',
+                'desc'   => 'Dewpoint',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Dewpoint',
+            ],
+            [
+                'ident'  => 'feuchte_abs',
+                'desc'   => 'Absolute humidity',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.absHumidity',
+            ],
+            [
+                'ident'  => 'baro',
+                'desc'   => 'Air pressure',
+                'type'   => VARIABLETYPE_FLOAT,
+                'prof'   => 'Wiffi.Pressure',
+            ],
+            [
+                'ident'   => 'luftdrucktrend',
+                'desc'    => 'Trend of air pressure',
+                'type'    => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'   => 'iaq_co2',
+                'desc'    => 'Airquality (CO2-IAQ)',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
                 'ignore'  => 0,
+            ],
+            [
+                'ident'   => 'co2_equ',
+                'desc'    => 'Airquality (CO2-Equ.)',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.CO2_Equ',
+                'ignore'  => 0,
+            ],
+            [
+                'ident'   => 'IAQ_max_note',
+                'desc'    => 'Airquality Max.Note',
+                'type'    => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'   => 'rr0_value',
+                'desc'    => 'Airquality (R/R0)',
+                'type'    => VARIABLETYPE_FLOAT,
+                'prof'    => 'Wiffi.RR0',
+                'ignore'  => 0.0,
             ],
         ];
 
@@ -933,6 +1029,9 @@ class Wiffi extends IPSModule
                 break;
             case self::$AIRSNIFFER:
                 $map = $map_airsniffer;
+                break;
+            case self::$AIRSNIFFER_MINI:
+                $map = $map_airsniffer_mini;
                 break;
             default:
                 $map = [];

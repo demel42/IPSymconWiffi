@@ -24,6 +24,7 @@ Unterstützt werden zur Zeit die folgenden Module (in Klammern die Firmware, mit
 - [WIFFI-WZ 2.0](https://www.stall.biz/project/der-wiffi-wz-2-0-der-wohnzimmersensor) (FW 106)
 - [WIFFI-3](https://www.stall.biz/project/der-wiffi-3-0-die-raumsonde-nicht-nur-fuer-das-wohnzimmer) (FW 20?)
 - [AirSniffer](https://www.stall.biz/project/der-airsniffer-schlechte-luft-kann-man-messen) (FW 11)
+- [AirSniffer-mini](https://www.stall.biz/project/raumluftqualitaet-messen-mit-dem-airsniffer-mini-2) (FW 11)
 
 ## 2. Voraussetzungen
 
@@ -130,7 +131,7 @@ GUIDs
 
 ## 7. Versions-Historie
 - 1.4 @ 11.10.2020 11:40 (beta)
-  - Unterstützung des Sensormoduls "AirSniffer" durch [bumas](https://www.symcon.de/forum/members/3610-bumaas)
+  - Unterstützung der Sensormodule "AirSniffer" und "AirSniffer-mini" durch [bumaas](https://www.symcon.de/forum/members/3610-bumaas)
 
 - 1.3 @ 12.09.2020 11:40
   - LICENSE.md hinzugefügt
