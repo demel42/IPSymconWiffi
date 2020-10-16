@@ -435,12 +435,12 @@ class Wiffi extends IPSModule
                 break;
         }
 
-        if ($tstamp_ign === false){
+        if ($tstamp_ign === false) {
             $this->SetValue('LastMessage', $tstamp);
         }
 
         $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', 0);
-        if ($rssi !== 0){
+        if ($rssi !== 0) {
             $this->SetValue('WifiStrength', $rssi);
             $rssi_ign = false;
         } else {

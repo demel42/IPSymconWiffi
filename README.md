@@ -130,7 +130,7 @@ GUIDs
   - Wiffi: `{92D39B81-9163-BBCC-734D-52EBBE78178B}`
 
 ## 7. Versions-Historie
-- 1.4 @ 11.10.2020 11:40 (beta)
+- 1.4 @ 16.10.2020 17:27 (beta)
   - Unterstützung der Sensormodule "AirSniffer" und "AirSniffer-mini" durch [bumaas](https://www.symcon.de/forum/members/3610-bumaas)
 
 - 1.3 @ 12.09.2020 11:40
