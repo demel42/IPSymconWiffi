@@ -441,7 +441,6 @@ class Wiffi extends IPSModule
 
         $rssi = $this->GetArrayElem($jdata, 'Systeminfo.WLAN_Signal_dBm', 0);
         if ($rssi !== 0){
-            var_dump ($rssi);
             $this->SetValue('WifiStrength', $rssi);
             $rssi_ign = false;
         } else {
