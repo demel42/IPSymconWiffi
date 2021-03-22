@@ -64,9 +64,17 @@
 			"IAQ Particles 10": "IAQ Feinstaub PM10",
 			"Airquality (CO2-Equ.)": "Schadgase CO2-Equ.",
 			"Airquality (CO2-IAQ)": "IAQ Schadgase CO2",
-			"Airquality Max.Note": "Luftqualität IAQ ges. Note",
+			"Airquality note": "Luftqualität IAQ Hinweis",
+			"Airquality rating": "Luftqualität IAQ Bewertung",
 			"On": "Ein",
 			"Off": "Aus",
+
+			"very good": "sehr gut",
+			"good": "gut",
+			"satisfactory": "befriedigend",
+			"marginal": "grenzwertig",
+			"worse": "schlecht",
+			"poor": "sehr schlecht",
 
 			"Instance getting created": "Instanz wird erstellt",
 			"Instance is active": "Instanz ist aktiv",

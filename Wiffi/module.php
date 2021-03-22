@@ -54,6 +54,15 @@ class Wiffi extends IPSModule
         $associations[] = ['Wert' => 300, 'Name' => '%d', 'Farbe' => 0x595959];
         $this->CreateVarProfile('Wiffi.IAQ', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Fog', $associations);
 
+        $associations = [];
+        $associations[] = ['Wert' => 1, 'Name' => $this->Translate('very good'), 'Farbe' => 0x00E400];
+        $associations[] = ['Wert' => 2, 'Name' => $this->Translate('good'), 'Farbe' => 0xFFFF00];
+        $associations[] = ['Wert' => 3, 'Name' => $this->Translate('satisfactory'), 'Farbe' => 0xFF7E00];
+        $associations[] = ['Wert' => 4, 'Name' => $this->Translate('marginal'), 'Farbe' => 0xFF0000];
+        $associations[] = ['Wert' => 5, 'Name' => $this->Translate('worse'), 'Farbe' => 0x99004C];
+        $associations[] = ['Wert' => 6, 'Name' => $this->Translate('poor'), 'Farbe' => 0x595959];
+        $this->CreateVarProfile('Wiffi.IAQ_note', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Fog', $associations);
+
         $this->CreateVarProfile('Wiffi.Temperatur', VARIABLETYPE_FLOAT, ' °C', -10, 30, 0, 1, 'Temperature');
         $this->CreateVarProfile('Wiffi.Humidity', VARIABLETYPE_FLOAT, ' %', 0, 0, 0, 0, 'Drops');
         $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 1, 'Drops');
@@ -506,7 +515,17 @@ class Wiffi extends IPSModule
                 }
             }
 
-            if (!$found) {
+            $ign = false;
+            switch ($module_type) {
+                case self::$AIRSNIFFER_MINI:
+                    if (in_array($ident, ['pm10', 'pm2_5', 'pm1_0', 'iaq10', 'iaq2_5', 'iaq1_0', 'r680_value'])) {
+                        $this->SendDebug(__FUNCTION__, 'ignore ident "' . $ident . '", value=' . $value, 0);
+                        $ign = true;
+                    }
+                    break;
+            }
+
+            if (!$found && !$ign) {
                 $this->SendDebug(__FUNCTION__, 'unknown ident "' . $ident . '", value=' . $value, 0);
                 $this->LogMessage(__FUNCTION__ . ': unknown ident ' . $ident . ', value=' . $value, KL_NOTIFY);
                 continue;
@@ -939,7 +958,8 @@ class Wiffi extends IPSModule
             [
                 'ident'   => 'IAQ_max_note',
                 'desc'    => 'Airquality Max.Note',
-                'type'    => VARIABLETYPE_STRING,
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ_note',
             ],
             [
                 'ident'   => 'rr0_value',
@@ -1006,9 +1026,22 @@ class Wiffi extends IPSModule
                 'ignore'  => 0,
             ],
             [
-                'ident'   => 'IAQ_max_note',
-                'desc'    => 'Airquality Max.Note',
+                'ident'   => 'IAQ_max',
+                'desc'    => 'IAQ Particles 1.0',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ',
+                'ignore'  => 0,
+            ],
+            [
+                'ident'   => 'IAQ_max_wertung',
+                'desc'    => 'Airquality rating',
                 'type'    => VARIABLETYPE_STRING,
+            ],
+            [
+                'ident'   => 'IAQ_max_note',
+                'desc'    => 'Airquality note',
+                'type'    => VARIABLETYPE_INTEGER,
+                'prof'    => 'Wiffi.IAQ_note',
             ],
             [
                 'ident'   => 'rr0_value',
