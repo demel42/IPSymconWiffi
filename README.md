@@ -1,6 +1,6 @@
 # IPSymconWiffi
 
-[![IPS-Version](https://img.shields.io/badge/Symcon_Version-5.3+-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
+[![IPS-Version](https://img.shields.io/badge/Symcon_Version-6.0+-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 ![Code](https://img.shields.io/badge/Code-PHP-blue.svg)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
@@ -28,7 +28,7 @@ Unterstützt werden zur Zeit die folgenden Module (in Klammern die Firmware, mit
 
 ## 2. Voraussetzungen
 
- - IP-Symcon ab Version 5.3
+ - IP-Symcon ab Version 6.0
  - eines der genannten Sensor Module, weitere können bei Bedarf und Unterstützung implementiert werden
 
 ## 3. Installation
@@ -110,15 +110,34 @@ damit schickt Wiffi minütlich die Daten sowie bei bestimmten Zuständen (Regen 
 #### Variablenprofile
 
 Es werden folgende Variablenprofile angelegt:
+
 * Boolean<br>
-Wiffi.MotionnDetector, Wiffi.NoiseDetector
+Wiffi.MotionnDetector,
+Wiffi.NoiseDetector
 
 * Integer<br>
-Wiffi.Azimut, Wiffi.CO2, Wiffi.Elevation, Wiffi.IAQ, Wiffi.min, Wiffi.Percent, Wiffi.sec, Wiffi.Wifi, Wiffi.CO2_Equ
+Wiffi.Azimut,
+Wiffi.CO2,
+Wiffi.CO2_Equ,
+Wiffi.Elevation,
+Wiffi.IAQ,
+Wiffi.IAQ_note,
+Wiffi.min,
+Wiffi.Percent,
+Wiffi.sec,
+Wiffi.Wifi
 
 * Float<br>
-Wiffi.absHumidity, Wiffi.Dewpoint, Wiffi.Heatindex, Wiffi.Humidity, Wiffi.Lux, Wiffi.Pressure, Wiffi.Temperatur,
-Wiffi.VOC, Wiffi.Particles, Wiffi.RR0
+Wiffi.absHumidity,
+Wiffi.Dewpoint,
+Wiffi.Heatindex,
+Wiffi.Humidity,
+Wiffi.Lux,
+Wiffi.Particles,
+Wiffi.Pressure,
+Wiffi.RR0,
+Wiffi.Temperatur,
+Wiffi.VOC
 
 * String<br>
 
@@ -130,6 +149,14 @@ GUIDs
   - Wiffi: `{92D39B81-9163-BBCC-734D-52EBBE78178B}`
 
 ## 7. Versions-Historie
+
+- 1.6 @ 05.05.2022 10:22
+  - IPS-Version ist nun minimal 6.0
+  - Anzeige der Modul/Bibliotheks-Informationen, Referenzen und Timer
+  - Implememtierung einer Update-Logik
+  - Überlagerung von Translate und Aufteilung von locale.json in 3 translation.json (Modul, libs und CommonStubs)
+  - diverse interne Änderungen
+
 - 1.5 @ 22.03.2021 21:29
   - Unterstützung neue Firmware des "AirSniffer-mini"
 

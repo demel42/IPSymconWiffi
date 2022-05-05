@@ -1,0 +1,23 @@
+{
+	"translations": {
+		"de": {
+			"__variableprofile__": "Wiffi.MotionDetector",
+			"__variableprofile__": "Wiffi.NoiseDetector",
+			"On": "Ein",
+			"Off": "Aus",
+
+			"__variableprofile__": "Wiffi.IAQ_note",
+			"very good": "sehr gut",
+			"good": "gut",
+			"satisfactory": "befriedigend",
+			"marginal": "grenzwertig",
+			"worse": "schlecht",
+			"poor": "sehr schlecht",
+
+			"__status__": "",
+			"Instance is inactive (wrong wiffi-module)": "Instanz ist inaktiv (falsches Wiffi-Modul)",
+
+			"__end__": ""
+		}
+	}
+}

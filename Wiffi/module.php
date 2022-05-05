@@ -2,13 +2,22 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../libs/common.php'; // globale Funktionen
-require_once __DIR__ . '/../libs/local.php';  // lokale Funktionen
+require_once __DIR__ . '/../libs/common.php';
+require_once __DIR__ . '/../libs/local.php';
 
 class Wiffi extends IPSModule
 {
-    use WiffiCommonLib;
+    use Wiffi\StubsCommonLib;
     use WiffiLocalLib;
+
+    private $ModuleDir;
+
+    public function __construct(string $InstanceID)
+    {
+        parent::__construct($InstanceID);
+
+        $this->ModuleDir = __DIR__;
+    }
 
     public function Create()
     {
@@ -21,76 +30,21 @@ class Wiffi extends IPSModule
         $this->RegisterPropertyBoolean('with_absolute_pressure', false);
         $this->RegisterPropertyBoolean('with_heatindex', false);
 
-        $associations = [];
-        $associations[] = ['Wert' => false, 'Name' => $this->Translate('Off'), 'Farbe' => -1];
-        $associations[] = ['Wert' => true,  'Name' => $this->Translate('On'), 'Farbe' => 0xEE0000];
-        $this->CreateVarProfile('Wiffi.NoiseDetector', VARIABLETYPE_BOOLEAN, '', 0, 0, 0, 0, '', $associations);
+        $this->RegisterAttributeString('UpdateInfo', '');
 
-        $associations = [];
-        $associations[] = ['Wert' => false, 'Name' => $this->Translate('Off'), 'Farbe' => -1];
-        $associations[] = ['Wert' => true,  'Name' => $this->Translate('On'), 'Farbe' => 0xEE0000];
-        $this->CreateVarProfile('Wiffi.MotionDetector', VARIABLETYPE_BOOLEAN, '', 0, 0, 0, 0, '', $associations);
-
-        $this->CreateVarProfile('Wiffi.Wifi', VARIABLETYPE_INTEGER, ' dBm', 0, 0, 0, 0, 'Intensity');
-        $this->CreateVarProfile('Wiffi.sec', VARIABLETYPE_INTEGER, ' s', 0, 0, 0, 0, 'Clock');
-        $this->CreateVarProfile('Wiffi.min', VARIABLETYPE_INTEGER, ' m', 0, 0, 0, 0, 'Clock');
-        $this->CreateVarProfile('Wiffi.Azimut', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
-        $this->CreateVarProfile('Wiffi.Elevation', VARIABLETYPE_INTEGER, ' °', 0, 0, 0, 0, '');
-        $this->CreateVarProfile('Wiffi.Percent', VARIABLETYPE_INTEGER, ' %', 0, 0, 0, 0, '');
-
-        $associations = [];
-        $associations[] = ['Wert' =>    0, 'Name' => '%d', 'Farbe' => 0x008000];
-        $associations[] = ['Wert' => 1000, 'Name' => '%d', 'Farbe' => 0xFFFF00];
-        $associations[] = ['Wert' => 1250, 'Name' => '%d', 'Farbe' => 0xFF8000];
-        $associations[] = ['Wert' => 1300, 'Name' => '%d', 'Farbe' => 0xFF0000];
-        $this->CreateVarProfile('Wiffi.CO2', VARIABLETYPE_INTEGER, ' ppm', 250, 2000, 0, 1, 'Gauge', $associations);
-
-        $associations = [];
-        $associations[] = ['Wert' =>   0, 'Name' => '%d', 'Farbe' => 0x00E400];
-        $associations[] = ['Wert' =>  50, 'Name' => '%d', 'Farbe' => 0xFFFF00];
-        $associations[] = ['Wert' => 100, 'Name' => '%d', 'Farbe' => 0xFF7E00];
-        $associations[] = ['Wert' => 150, 'Name' => '%d', 'Farbe' => 0xFF0000];
-        $associations[] = ['Wert' => 200, 'Name' => '%d', 'Farbe' => 0x99004C];
-        $associations[] = ['Wert' => 300, 'Name' => '%d', 'Farbe' => 0x595959];
-        $this->CreateVarProfile('Wiffi.IAQ', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Fog', $associations);
-
-        $associations = [];
-        $associations[] = ['Wert' => 1, 'Name' => $this->Translate('very good'), 'Farbe' => 0x00E400];
-        $associations[] = ['Wert' => 2, 'Name' => $this->Translate('good'), 'Farbe' => 0xFFFF00];
-        $associations[] = ['Wert' => 3, 'Name' => $this->Translate('satisfactory'), 'Farbe' => 0xFF7E00];
-        $associations[] = ['Wert' => 4, 'Name' => $this->Translate('marginal'), 'Farbe' => 0xFF0000];
-        $associations[] = ['Wert' => 5, 'Name' => $this->Translate('worse'), 'Farbe' => 0x99004C];
-        $associations[] = ['Wert' => 6, 'Name' => $this->Translate('poor'), 'Farbe' => 0x595959];
-        $this->CreateVarProfile('Wiffi.IAQ_note', VARIABLETYPE_INTEGER, '', 0, 500, 0, 0, 'Fog', $associations);
-
-        $this->CreateVarProfile('Wiffi.Temperatur', VARIABLETYPE_FLOAT, ' °C', -10, 30, 0, 1, 'Temperature');
-        $this->CreateVarProfile('Wiffi.Humidity', VARIABLETYPE_FLOAT, ' %', 0, 0, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.absHumidity', VARIABLETYPE_FLOAT, ' g/m³', 10, 100, 0, 1, 'Drops');
-        $this->CreateVarProfile('Wiffi.Pressure', VARIABLETYPE_FLOAT, ' mbar', 0, 0, 0, 0, 'Gauge');
-        $this->CreateVarProfile('Wiffi.Heatindex', VARIABLETYPE_FLOAT, ' °C', 0, 100, 0, 0, 'Temperature');
-        $this->CreateVarProfile('Wiffi.Dewpoint', VARIABLETYPE_FLOAT, ' °C', 0, 30, 0, 0, 'Drops');
-        $this->CreateVarProfile('Wiffi.Lux', VARIABLETYPE_FLOAT, ' lx', 0, 0, 0, 0, 'Sun');
-        $this->CreateVarProfile('Wiffi.VOC', VARIABLETYPE_FLOAT, '', 0, 0, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.Particles', VARIABLETYPE_FLOAT, ' µg/m³', 0, 100, 0, 2, 'Gauge');
-        $this->CreateVarProfile('Wiffi.CO2_Equ', VARIABLETYPE_INTEGER, ' ppm', 0, 5000, 0, 0, 'Gauge');
-        $this->CreateVarProfile('Wiffi.RR0', VARIABLETYPE_FLOAT, '', 0, 1, 0, 2, 'Gauge');
+        $this->InstallVarProfiles(false);
 
         $this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
     }
 
-    public function ApplyChanges()
+    private function CheckModuleConfiguration()
     {
-        parent::ApplyChanges();
+        $r = [];
 
-        $status = IS_ACTIVE;
-
-        $module_type = $this->ReadPropertyInteger('module_type');
-
-        $vpos = 1;
         $varList = [];
 
-        $identList = [];
         $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
+        $module_type = $this->ReadPropertyInteger('module_type');
         $fieldMap = $this->getFieldMap($module_type);
         foreach ($fieldMap as $map) {
             $ident = $this->GetArrayElem($map, 'ident', '');
@@ -102,38 +56,28 @@ class Wiffi extends IPSModule
                 }
             }
             if ($use) {
-                $identList[] = $ident;
+                $varList[] = $ident;
             }
-            $desc = $this->GetArrayElem($map, 'desc', '');
-            $vartype = $this->GetArrayElem($map, 'type', '');
-            $varprof = $this->GetArrayElem($map, 'prof', '');
-            $this->SendDebug(__FUNCTION__, 'register variable: ident=' . $ident . ', vartype=' . $vartype . ', varprof=' . $varprof . ', use=' . $this->bool2str($use), 0);
-            $this->MaintainVariable($ident, $this->Translate($desc), $vartype, $varprof, $vpos++, $use);
-            $varList[] = $ident;
         }
 
-        $vpos = 80;
-
-        $module_type = $this->ReadPropertyInteger('module_type');
         $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
         if ($with_heatindex) {
             switch ($module_type) {
                 case self::$WIFFI_MODULE_WZ:
                 case self::$WIFFI_MODULE_3:
                 case self::$AIRSNIFFER:
-                    if (!(in_array('temp', $identList) && in_array('feuchte', $identList))) {
+                    if (!(in_array('temp', $varList) && in_array('feuchte', $varList))) {
                         $this->SendDebug(__FUNCTION__, '"with_heatindex" needs "temp", "feuchte"', 0);
-                        $with_heatindex = false;
-                        $status = self::$IS_INVALIDCONFIG;
+                        $r[] = $this->Translate('Heatindex needs "temp", "feuchte"');
                     }
                     break;
                 default:
                     $this->SendDebug(__FUNCTION__, '"with_heatindex" not available for module_type ' . $module_type, 0);
+                    $r[] = $this->Translate('Heatindex is not available for this module type');
                     $status = self::$IS_INVALIDCONFIG;
                     break;
             }
         }
-        $this->MaintainVariable('Heatindex', $this->Translate('Heatindex'), VARIABLETYPE_FLOAT, 'Wiffi.Heatindex', $vpos++, $with_heatindex);
 
         $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
         if ($with_absolute_pressure) {
@@ -142,21 +86,78 @@ class Wiffi extends IPSModule
                 case self::$WIFFI_MODULE_3:
                 case self::$AIRSNIFFER:
                 case self::$AIRSNIFFER_MINI:
-                    if (!(in_array('temp', $identList) && in_array('feuchte_rel', $identList))) {
+                    if (!(in_array('temp', $varList) && in_array('feuchte_rel', $varList))) {
                         $altitude = $this->ReadPropertyInteger('altitude');
-                        if (!(in_array('baro', $identList) && in_array('temp', $identList) && $altitude > 0)) {
+                        if (!(in_array('baro', $varList) && in_array('temp', $varList) && $altitude > 0)) {
                             $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" needs "baro", "temp" and "altitude"', 0);
-                            $with_absolute_pressure = false;
-                            $status = self::$IS_INVALIDCONFIG;
+                            $r[] = $this->Translate('Absolute pressure needs "baro", "temp" and the altitude');
                         }
                     }
                     break;
                 default:
                     $this->SendDebug(__FUNCTION__, '"with_absolute_pressure" not available for module_type ' . $module_type, 0);
-                    $status = self::$IS_INVALIDCONFIG;
+                    $r[] = $this->Translate('Absolute pressure is not available for this module type');
                     break;
             }
         }
+
+        return $r;
+    }
+
+    public function ApplyChanges()
+    {
+        parent::ApplyChanges();
+
+        $this->MaintainReferences();
+
+        if ($this->CheckPrerequisites() != false) {
+            $this->SetStatus(self::$IS_INVALIDPREREQUISITES);
+            return;
+        }
+
+        if ($this->CheckUpdate() != false) {
+            $this->SetStatus(self::$IS_UPDATEUNCOMPLETED);
+            return;
+        }
+
+        if ($this->CheckConfiguration() != false) {
+            $this->SetStatus(self::$IS_INVALIDCONFIG);
+            return;
+        }
+
+        $vpos = 1;
+
+        $varList = [];
+
+        $use_fields = json_decode($this->ReadPropertyString('use_fields'), true);
+        $module_type = $this->ReadPropertyInteger('module_type');
+        $fieldMap = $this->getFieldMap($module_type);
+        foreach ($fieldMap as $map) {
+            $ident = $this->GetArrayElem($map, 'ident', '');
+            $use = false;
+            foreach ($use_fields as $field) {
+                if ($ident == $this->GetArrayElem($field, 'ident', '')) {
+                    $use = (bool) $this->GetArrayElem($field, 'use', false);
+                    break;
+                }
+            }
+            if ($use) {
+                $varList[] = $ident;
+            }
+            $desc = $this->GetArrayElem($map, 'desc', '');
+            $vartype = $this->GetArrayElem($map, 'type', '');
+            $varprof = $this->GetArrayElem($map, 'prof', '');
+            $this->SendDebug(__FUNCTION__, 'register variable: ident=' . $ident . ', vartype=' . $vartype . ', varprof=' . $varprof . ', use=' . $this->bool2str($use), 0);
+            $this->MaintainVariable($ident, $this->Translate($desc), $vartype, $varprof, $vpos++, $use);
+        }
+
+        $vpos = 80;
+
+        $module_type = $this->ReadPropertyInteger('module_type');
+        $with_heatindex = $this->ReadPropertyBoolean('with_heatindex');
+        $this->MaintainVariable('Heatindex', $this->Translate('Heatindex'), VARIABLETYPE_FLOAT, 'Wiffi.Heatindex', $vpos++, $with_heatindex);
+
+        $with_absolute_pressure = $this->ReadPropertyBoolean('with_absolute_pressure');
         $this->MaintainVariable('AbsolutePressure', $this->Translate('Absolute pressure'), VARIABLETYPE_FLOAT, 'Wiffi.Pressure', $vpos++, $with_absolute_pressure);
 
         $vpos = 100;
@@ -176,7 +177,7 @@ class Wiffi extends IPSModule
             }
         }
 
-        $this->SetStatus($status);
+        $this->SetStatus(IS_ACTIVE);
     }
 
     private function findVariables($objID, &$objList)
@@ -223,79 +224,98 @@ class Wiffi extends IPSModule
 
     protected function GetFormElements()
     {
-        $formElements = [];
-        $formElements[] = ['type' => 'Label', 'caption' => 'Wiffi'];
+        $formElements = $this->GetCommonFormElements('Wiffi');
 
-        $opts_module_type = [];
-        $opts_module_type[] = ['caption' => $this->Translate('none'), 'value' => self::$WIFFI_MODULE_NONE];
-        $opts_module_type[] = ['caption' => $this->Translate('Wiffi-WZ'), 'value' => self::$WIFFI_MODULE_WZ];
-        $opts_module_type[] = ['caption' => $this->Translate('Wiffi 3'), 'value' => self::$WIFFI_MODULE_3];
-        $opts_module_type[] = ['caption' => $this->Translate('AirSniffer'), 'value' => self::$AIRSNIFFER];
-        $opts_module_type[] = ['caption' => $this->Translate('AirSniffer-mini'), 'value' => self::$AIRSNIFFER_MINI];
+        if ($this->GetStatus() == self::$IS_UPDATEUNCOMPLETED) {
+            return $formElements;
+        }
 
         $formElements[] = [
             'type'     => 'Select',
             'name'     => 'module_type',
             'caption'  => 'Module type',
-            'options'  => $opts_module_type,
-            'onChange' => 'Wiffi_UpdateFields($id, $module_type, $use_fields);'
+            'options'  => [
+                [
+                    'caption' => $this->Translate('none'),
+                    'value'   => self::$WIFFI_MODULE_NONE,
+                ],
+                [
+                    'caption' => $this->Translate('Wiffi-WZ'),
+                    'value'   => self::$WIFFI_MODULE_WZ,
+                ],
+                [
+                    'caption' => $this->Translate('Wiffi 3'),
+                    'value'   => self::$WIFFI_MODULE_3,
+                ],
+                [
+                    'caption' => $this->Translate('AirSniffer'),
+                    'value'   => self::$AIRSNIFFER,
+                ],
+                [
+                    'caption' => $this->Translate('AirSniffer-mini'),
+                    'value'   => self::$AIRSNIFFER_MINI,
+                ],
+            ],
+            'onChange' => $this->GetModulePrefix() . '_UpdateFields($id, $module_type, $use_fields);'
         ];
-
-        $module_type = $this->ReadPropertyInteger('module_type');
 
         $values = [];
+        $module_type = $this->ReadPropertyInteger('module_type');
         $fieldMap = $this->getFieldMap($module_type);
         foreach ($fieldMap as $map) {
-            $ident = $this->GetArrayElem($map, 'ident', '');
-            $desc = $this->GetArrayElem($map, 'desc', '');
-            $values[] = ['ident' => $ident, 'desc' => $this->Translate($desc)];
+            $values[] = [
+                'ident' => $map['ident'],
+                'desc'  => $this->Translate($map['desc']),
+            ];
         }
 
-        $columns = [];
-        $columns[] = [
-            'caption' => 'Name',
-            'name'    => 'ident',
-            'width'   => '200px',
-            'save'    => true
-        ];
-        $columns[] = [
-            'caption' => 'Description',
-            'name'    => 'desc',
-            'width'   => 'auto'
-        ];
-        $columns[] = [
-            'caption' => 'use',
-            'name'    => 'use',
-            'width'   => '100px',
-            'edit'    => [
-                'type' => 'CheckBox'
-            ]
+        $formElements[] = [
+            'type'  => 'ExpansionPanel',
+            'items' => [
+                [
+                    'type'     => 'List',
+                    'name'     => 'use_fields',
+                    'caption'  => 'available variables',
+                    'rowCount' => count($values),
+                    'add'      => false,
+                    'delete'   => false,
+                    'columns'  => [
+                        [
+                            'name'    => 'ident',
+                            'width'   => '200px',
+                            'save'    => true,
+                            'caption' => 'Name',
+                        ],
+                        [
+                            'name'    => 'desc',
+                            'width'   => 'auto',
+                            'caption' => 'Description',
+                        ],
+                        [
+                            'name'    => 'use',
+                            'width'   => '100px',
+                            'edit'    => [
+                                'type' => 'CheckBox'
+                            ],
+                            'caption' => 'use',
+                        ],
+                    ],
+                    'values'   => $values
+                ],
+            ],
+            'caption' => 'Variables',
         ];
 
-        $items = [];
-        $items[] = [
-            'type'     => 'List',
-            'name'     => 'use_fields',
-            'caption'  => 'available variables',
-            'rowCount' => count($values),
-            'add'      => false,
-            'delete'   => false,
-            'columns'  => $columns,
-            'values'   => $values
-        ];
-
-        //expanded = true ist ein Workaround. Siehe https://www.symcon.de/forum/threads/42842-Fehler-bei-onChange-in-Verbindung-mit-ExpansionPanel?p=437371#post437371
-        $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Variables', 'expanded' => true];
-
-        $items = [];
-        $items[] = [
-            'type'    => 'NumberSpinner',
-            'name'    => 'altitude',
-            'caption' => 'Module altitude'
-        ];
-        $items[] = [
-            'type'    => 'Label',
-            'caption' => 'additional Calculations'
+        $items = [
+            [
+                'name'    => 'altitude',
+                'type'    => 'NumberSpinner',
+                'caption' => 'Module altitude'
+            ],
+            [
+                'type'    => 'Label',
+                'caption' => 'additional Calculations'
+            ],
         ];
 
         $module_type = $this->ReadPropertyInteger('module_type');
@@ -305,14 +325,13 @@ class Wiffi extends IPSModule
             case self::$AIRSNIFFER:
             case self::$AIRSNIFFER_MINI:
                 $items[] = [
-                    'type'    => 'CheckBox',
                     'name'    => 'with_heatindex',
+                    'type'    => 'CheckBox',
                     'caption' => ' ... Heatindex (needs "temp", "feuchte")'
                 ];
-
                 $items[] = [
-                    'type'    => 'CheckBox',
                     'name'    => 'with_absolute_pressure',
+                    'type'    => 'CheckBox',
                     'caption' => ' ... absolute pressure (needs "baro", "temp" and the altitude)'
                 ];
                 break;
@@ -320,7 +339,11 @@ class Wiffi extends IPSModule
                 break;
         }
 
-        $formElements[] = ['type' => 'ExpansionPanel', 'items' => $items, 'caption' => 'Options'];
+        $formElements[] = [
+            'type'    => 'ExpansionPanel',
+            'items'   => $items,
+            'caption' => 'Options'
+        ];
 
         return $formElements;
     }
@@ -329,7 +352,31 @@ class Wiffi extends IPSModule
     {
         $formActions = [];
 
+        if ($this->GetStatus() == self::$IS_UPDATEUNCOMPLETED) {
+            $formActions[] = $this->GetCompleteUpdateFormAction();
+
+            $formActions[] = $this->GetInformationFormAction();
+            $formActions[] = $this->GetReferencesFormAction();
+
+            return $formActions;
+        }
+
+        $formActions[] = $this->GetInformationFormAction();
+        $formActions[] = $this->GetReferencesFormAction();
+
         return $formActions;
+    }
+
+    public function RequestAction($ident, $value)
+    {
+        if ($this->CommonRequestAction($ident, $value)) {
+            return;
+        }
+        switch ($ident) {
+            default:
+                $this->SendDebug(__FUNCTION__, 'invalid ident ' . $ident, 0);
+                break;
+        }
     }
 
     public function ReceiveData($msg)

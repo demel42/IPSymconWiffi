@@ -3,9 +3,18 @@
 		"de": {
 			"Wiffi": "Wiffi",
 
+			"__function__": "CheckConfiguration",
+            "Heatindex needs \"temp\", \"feuchte\"":
+                "Für den Hitzeindex werden \"temp\", \"feuchte\" benötigt",
+			"Heatindex is not available for this module type":
+				"Hitzeindex ist für diesen Modultyp nicht verfügbar",
+            "Absolute pressure needs \"baro\", \"temp\" and the altitude":
+                "Absoluter Druck benötigt \"baro\", \"temp\" und die Höhe",
+			"Absolute pressure is not available for this module type":
+				"Absoluter Druck ist für diesen Modultyp nicht verfügbar",
+
+			"__elements__": "",
 			"Module type": "Modultyp",
-			"none": "nicht angegeben",
-			"Wiffi WZ": "Wiffi WZ",
 
 			"Variables": "Variablen",
 			"available variables": "verfügbare Variablen",
@@ -21,7 +30,12 @@
 			" ... absolute pressure (needs \"baro\", \"temp\" and the altitude)":
 				" ... absoluter Luftdruck (benötigt \"baro\", \"temp\" und die Höhe)",
 
-			"Module description": "Modulbeschreibung",
+			"__options__": "module_type",
+			"none": "nicht angegeben",
+			"Wiffi WZ": "Wiffi WZ",
+			"Wiffi 3": "Wiffi 3",
+			"AirSniffer": "AirSniffer",
+			"AirSniffer-mini": "AirSniffer-mini",
 
 			"Last measurement": "letzte Messung",
 			"Uptime": "Uptime",
@@ -66,23 +80,8 @@
 			"Airquality (CO2-IAQ)": "IAQ Schadgase CO2",
 			"Airquality note": "Luftqualität IAQ Hinweis",
 			"Airquality rating": "Luftqualität IAQ Bewertung",
-			"On": "Ein",
-			"Off": "Aus",
 
-			"very good": "sehr gut",
-			"good": "gut",
-			"satisfactory": "befriedigend",
-			"marginal": "grenzwertig",
-			"worse": "schlecht",
-			"poor": "sehr schlecht",
-
-			"Instance getting created": "Instanz wird erstellt",
-			"Instance is active": "Instanz ist aktiv",
-			"Instance is deleted": "Instanz wird gelöscht",
-			"Instance is inactive": "Instanz ist inaktiv",
-			"Instance is not created": "Instanz wurde nicht erzeugt",
-			"Instance is inactive (invalid configuration)": "Instanz ist inaktiv (ungültige Konfiguration)",
-			"Instance is inactive (wrong wiffi-module)": "Instanz ist inaktiv (falsches Wiffi-Modul)"
+			"__end__": ""
 		}
 	}
 }
