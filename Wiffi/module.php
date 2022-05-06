@@ -361,6 +361,19 @@ class Wiffi extends IPSModule
             return $formActions;
         }
 
+        $formActions[] = [
+            'type'      => 'ExpansionPanel',
+            'caption'   => 'Expert area',
+            'expanded ' => false,
+            'items'     => [
+                [
+                    'type'    => 'Button',
+                    'caption' => 'Re-install variable-profiles',
+                    'onClick' => $this->GetModulePrefix() . '_InstallVarProfiles($id, true);'
+                ],
+            ],
+        ];
+
         $formActions[] = $this->GetInformationFormAction();
         $formActions[] = $this->GetReferencesFormAction();
 

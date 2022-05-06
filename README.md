@@ -150,7 +150,7 @@ GUIDs
 
 ## 7. Versions-Historie
 
-- 1.6 @ 05.05.2022 10:22
+- 1.6 @ 06.05.2022 10:12
   - IPS-Version ist nun minimal 6.0
   - Anzeige der Modul/Bibliotheks-Informationen, Referenzen und Timer
   - Implememtierung einer Update-Logik
