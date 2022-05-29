@@ -150,6 +150,12 @@ GUIDs
 
 ## 7. Versions-Historie
 
+- 1.7 @ 29.05.2022 14:47
+  - update submodule CommonStubs
+    Fix: Ausgabe des nächsten Timer-Zeitpunkts
+  - einige Funktionen (GetFormElements, GetFormActions) waren fehlerhafterweise "protected" und nicht "private"
+  - interne Funktionen sind nun entweder private oder nur noch via IPS_RequestAction() erreichbar
+
 - 1.6.2 @ 17.05.2022 15:38
   - update submodule CommonStubs
     Fix: Absicherung gegen fehlende Objekte

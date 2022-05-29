@@ -200,7 +200,7 @@ class Wiffi extends IPSModule
         }
     }
 
-    public function UpdateFields(int $module_type, object $use_fields)
+    private function UpdateUseFields(int $module_type, object $use_fields)
     {
         $values = [];
 
@@ -216,13 +216,17 @@ class Wiffi extends IPSModule
                     break;
                 }
             }
-            $values[] = ['ident' => $ident, 'desc' => $this->Translate($desc), 'use' => $use];
+            $values[] = [
+                'ident' => $ident,
+                'desc'  => $this->Translate($desc),
+                'use'   => $use
+            ];
         }
 
         $this->UpdateFormField('use_fields', 'values', json_encode($values));
     }
 
-    protected function GetFormElements()
+    private function GetFormElements()
     {
         $formElements = $this->GetCommonFormElements('Wiffi');
 
@@ -256,7 +260,7 @@ class Wiffi extends IPSModule
                     'value'   => self::$AIRSNIFFER_MINI,
                 ],
             ],
-            'onChange' => $this->GetModulePrefix() . '_UpdateFields($id, $module_type, $use_fields);'
+            'onClick' => 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateUseFields", "");',
         ];
 
         $values = [];
@@ -348,7 +352,7 @@ class Wiffi extends IPSModule
         return $formElements;
     }
 
-    protected function GetFormActions()
+    private function GetFormActions()
     {
         $formActions = [];
 
@@ -366,11 +370,7 @@ class Wiffi extends IPSModule
             'caption'   => 'Expert area',
             'expanded ' => false,
             'items'     => [
-                [
-                    'type'    => 'Button',
-                    'caption' => 'Re-install variable-profiles',
-                    'onClick' => $this->GetModulePrefix() . '_InstallVarProfiles($id, true);'
-                ],
+                $this->GetInstallVarProfilesFormItem(),
             ],
         ];
 
@@ -386,6 +386,9 @@ class Wiffi extends IPSModule
             return;
         }
         switch ($ident) {
+            case 'UpdateUseFields':
+                $this->UpdateUseFields();
+                break;
             default:
                 $this->SendDebug(__FUNCTION__, 'invalid ident ' . $ident, 0);
                 break;
