@@ -111,17 +111,17 @@ class Wiffi extends IPSModule
         $this->MaintainReferences();
 
         if ($this->CheckPrerequisites() != false) {
-            $this->SetStatus(self::$IS_INVALIDPREREQUISITES);
+            $this->MaintainStatus(self::$IS_INVALIDPREREQUISITES);
             return;
         }
 
         if ($this->CheckUpdate() != false) {
-            $this->SetStatus(self::$IS_UPDATEUNCOMPLETED);
+            $this->MaintainStatus(self::$IS_UPDATEUNCOMPLETED);
             return;
         }
 
         if ($this->CheckConfiguration() != false) {
-            $this->SetStatus(self::$IS_INVALIDCONFIG);
+            $this->MaintainStatus(self::$IS_INVALIDCONFIG);
             return;
         }
 
@@ -177,7 +177,7 @@ class Wiffi extends IPSModule
             }
         }
 
-        $this->SetStatus(IS_ACTIVE);
+        $this->MaintainStatus(IS_ACTIVE);
     }
 
     private function findVariables($objID, &$objList)
@@ -446,14 +446,14 @@ class Wiffi extends IPSModule
             case self::$WIFFI_MODULE_WZ:
                 if ($modultyp != 'wiffi-wz') {
                     $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
-                    $this->SetStatus(self::$IS_MODULETYPEMISMATCH);
+                    $this->MaintainStatus(self::$IS_MODULETYPEMISMATCH);
                     return;
                 }
                 break;
             case self::$WIFFI_MODULE_3:
                 if ($modultyp != 'wiffi-3.0') {
                     $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
-                    $this->SetStatus(self::$IS_MODULETYPEMISMATCH);
+                    $this->MaintainStatus(self::$IS_MODULETYPEMISMATCH);
                     return;
                 }
                 break;
@@ -461,7 +461,7 @@ class Wiffi extends IPSModule
             case self::$AIRSNIFFER_MINI:
                 if ($modultyp != 'airsniffer') {
                     $this->SendDebug(__FUNCTION__, 'wrong module-type "' . $modultyp . '"', 0);
-                    $this->SetStatus(self::$IS_MODULETYPEMISMATCH);
+                    $this->MaintainStatus(self::$IS_MODULETYPEMISMATCH);
                     return;
                 }
                 break;
