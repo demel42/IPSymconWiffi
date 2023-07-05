@@ -154,7 +154,6 @@ GUIDs
   - Vorbereitung auf IPS 7 / PHP 8.2
   - update submodule CommonStubs
     - Absicherung bei Zugriff auf Objekte und Inhalte
-    - Vorbereitung auf IPS 7 / PHP 8.2
 
 - 1.8.1 @ 07.10.2022 13:59
   - update submodule CommonStubs
